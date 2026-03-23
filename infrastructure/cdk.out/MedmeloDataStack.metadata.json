@@ -1,0 +1,56 @@
+{
+  "/MedmeloDataStack/RedisSubnetGroup": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RedisSubnetGroup"
+    }
+  ],
+  "/MedmeloDataStack/MedmeloRedis": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MedmeloRedis"
+    }
+  ],
+  "/MedmeloDataStack/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    }
+  ],
+  "/MedmeloDataStack/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    }
+  ],
+  "/MedmeloDataStack/ExamResultsDLQ/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExamResultsDLQ4D285B3A"
+    }
+  ],
+  "/MedmeloDataStack/ExamResultsQueue/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExamResultsQueue921E4EFA"
+    }
+  ],
+  "/MedmeloDataStack/NotificationsDLQ/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "NotificationsDLQ7EE1DB27"
+    }
+  ],
+  "/MedmeloDataStack/NotificationsQueue/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "NotificationsQueue3B766469"
+    }
+  ],
+  "/MedmeloDataStack/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    }
+  ]
+}

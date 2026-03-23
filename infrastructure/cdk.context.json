@@ -1,0 +1,58 @@
+{
+  "vpc-provider:account=101374115637:filter.tag:Name=medmelo-vpc:region=ap-south-1:returnAsymmetricSubnets=true": {
+    "vpcId": "vpc-0caa1d01fc56123e1",
+    "vpcCidrBlock": "10.0.0.0/16",
+    "ownerAccountId": "101374115637",
+    "availabilityZones": [],
+    "subnetGroups": [
+      {
+        "name": "Private",
+        "type": "Private",
+        "subnets": [
+          {
+            "subnetId": "subnet-059095141076e4b0f",
+            "cidr": "10.0.11.0/24",
+            "availabilityZone": "ap-south-1a",
+            "routeTableId": "rtb-011ce31f1af476d7b"
+          },
+          {
+            "subnetId": "subnet-0bcfc328e35fb2cef",
+            "cidr": "10.0.21.0/24",
+            "availabilityZone": "ap-south-1a",
+            "routeTableId": "rtb-011ce31f1af476d7b"
+          },
+          {
+            "subnetId": "subnet-0b1e0be3d0fb6ffd6",
+            "cidr": "10.0.12.0/24",
+            "availabilityZone": "ap-south-1b",
+            "routeTableId": "rtb-0effb4c6262ede584"
+          },
+          {
+            "subnetId": "subnet-0be5207186b5c2d19",
+            "cidr": "10.0.22.0/24",
+            "availabilityZone": "ap-south-1b",
+            "routeTableId": "rtb-0effb4c6262ede584"
+          }
+        ]
+      },
+      {
+        "name": "Public",
+        "type": "Public",
+        "subnets": [
+          {
+            "subnetId": "subnet-0fb0b53412e15a072",
+            "cidr": "10.0.1.0/24",
+            "availabilityZone": "ap-south-1a",
+            "routeTableId": "rtb-0b54a072ae9701102"
+          },
+          {
+            "subnetId": "subnet-067428b4a6cea98d9",
+            "cidr": "10.0.2.0/24",
+            "availabilityZone": "ap-south-1b",
+            "routeTableId": "rtb-0b54a072ae9701102"
+          }
+        ]
+      }
+    ]
+  }
+}

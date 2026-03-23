@@ -1,0 +1,141 @@
+{
+ "Resources": {
+  "RedisSubnetGroup": {
+   "Type": "AWS::ElastiCache::SubnetGroup",
+   "Properties": {
+    "Description": "Subnets for Redis",
+    "SubnetIds": [
+     "subnet-0bcfc328e35fb2cef",
+     "subnet-0be5207186b5c2d19"
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloDataStack/RedisSubnetGroup"
+   }
+  },
+  "MedmeloRedis": {
+   "Type": "AWS::ElastiCache::CacheCluster",
+   "Properties": {
+    "CacheNodeType": "cache.t4g.micro",
+    "CacheSubnetGroupName": {
+     "Ref": "RedisSubnetGroup"
+    },
+    "Engine": "redis",
+    "NumCacheNodes": 1,
+    "VpcSecurityGroupIds": [
+     "sg-09a387465a0b34e88"
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloDataStack/MedmeloRedis"
+   }
+  },
+  "ExamResultsDLQ4D285B3A": {
+   "Type": "AWS::SQS::Queue",
+   "Properties": {
+    "QueueName": "medmelo-exam-results-dlq"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "MedmeloDataStack/ExamResultsDLQ/Resource"
+   }
+  },
+  "ExamResultsQueue921E4EFA": {
+   "Type": "AWS::SQS::Queue",
+   "Properties": {
+    "QueueName": "medmelo-exam-results",
+    "RedrivePolicy": {
+     "deadLetterTargetArn": {
+      "Fn::GetAtt": [
+       "ExamResultsDLQ4D285B3A",
+       "Arn"
+      ]
+     },
+     "maxReceiveCount": 3
+    },
+    "VisibilityTimeout": 30
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "MedmeloDataStack/ExamResultsQueue/Resource"
+   }
+  },
+  "NotificationsDLQ7EE1DB27": {
+   "Type": "AWS::SQS::Queue",
+   "Properties": {
+    "QueueName": "medmelo-notifications-dlq"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "MedmeloDataStack/NotificationsDLQ/Resource"
+   }
+  },
+  "NotificationsQueue3B766469": {
+   "Type": "AWS::SQS::Queue",
+   "Properties": {
+    "QueueName": "medmelo-notifications",
+    "RedrivePolicy": {
+     "deadLetterTargetArn": {
+      "Fn::GetAtt": [
+       "NotificationsDLQ7EE1DB27",
+       "Arn"
+      ]
+     },
+     "maxReceiveCount": 3
+    },
+    "VisibilityTimeout": 30
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "MedmeloDataStack/NotificationsQueue/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/yXJQQ7CIBBA0bN0DyNib8DCte0BDKXTSIugDGMXhLub6ur/5GnQfQ+qsztJN28y+AnqWKzbxICUODsUdqd7xWCpeGfdA6GaJY48RSzXnPglzBLNASYwFcxN0Jug3hgZD/tNa03ENCOsdProC5wVqG4l72XmWPwTYfj3C5fRmdGSAAAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloDataStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}
