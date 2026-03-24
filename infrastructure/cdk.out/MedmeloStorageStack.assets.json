@@ -1,0 +1,36 @@
+{
+  "version": "52.0.0",
+  "files": {
+    "faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6": {
+      "displayName": "MedmeloStorageStack/Custom::S3AutoDeleteObjectsCustomResourceProvider Code",
+      "source": {
+        "path": "asset.faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "101374115637-ap-south-1-949ad19c": {
+          "bucketName": "cdk-hnb659fds-assets-101374115637-ap-south-1",
+          "objectKey": "faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6.zip",
+          "region": "ap-south-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::101374115637:role/cdk-hnb659fds-file-publishing-role-101374115637-ap-south-1"
+        }
+      }
+    },
+    "053b8df80d8c4084309e541a88097d84af6124234a9fc4f9d8f47ccd223ea0c8": {
+      "displayName": "MedmeloStorageStack Template",
+      "source": {
+        "path": "MedmeloStorageStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "101374115637-ap-south-1-8d3d8506": {
+          "bucketName": "cdk-hnb659fds-assets-101374115637-ap-south-1",
+          "objectKey": "053b8df80d8c4084309e541a88097d84af6124234a9fc4f9d8f47ccd223ea0c8.json",
+          "region": "ap-south-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::101374115637:role/cdk-hnb659fds-file-publishing-role-101374115637-ap-south-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

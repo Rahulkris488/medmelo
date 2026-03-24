@@ -1,0 +1,1509 @@
+{
+ "Resources": {
+  "ExamResultsDLQ4D285B3A": {
+   "Type": "AWS::SQS::Queue",
+   "Properties": {
+    "QueueName": "medmelo-exam-results-dlq-prod"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/ExamResultsDLQ/Resource"
+   }
+  },
+  "ExamResultsQueue921E4EFA": {
+   "Type": "AWS::SQS::Queue",
+   "Properties": {
+    "QueueName": "medmelo-exam-results-prod",
+    "RedrivePolicy": {
+     "deadLetterTargetArn": {
+      "Fn::GetAtt": [
+       "ExamResultsDLQ4D285B3A",
+       "Arn"
+      ]
+     },
+     "maxReceiveCount": 3
+    },
+    "VisibilityTimeout": 30
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/ExamResultsQueue/Resource"
+   }
+  },
+  "LambdaAsyncDLQ1D42C404": {
+   "Type": "AWS::SQS::Queue",
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/LambdaAsyncDLQ/Resource"
+   }
+  },
+  "LambdaCoreServiceRole9A269AD3": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/LambdaCore/ServiceRole/Resource"
+   }
+  },
+  "LambdaCoreServiceRoleDefaultPolicy8E94CE57": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "xray:PutTraceSegments",
+        "xray:PutTelemetryRecords"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "sqs:SendMessage",
+        "sqs:GetQueueAttributes",
+        "sqs:GetQueueUrl"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "LambdaAsyncDLQ1D42C404",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": "secretsmanager:GetSecretValue",
+       "Effect": "Allow",
+       "Resource": "arn:aws:secretsmanager:ap-south-1:101374115637:secret:medmelo/aurora/credentials-*"
+      },
+      {
+       "Action": "secretsmanager:GetSecretValue",
+       "Effect": "Allow",
+       "Resource": "arn:aws:secretsmanager:ap-south-1:101374115637:secret:medmelo/redis/auth-*"
+      },
+      {
+       "Action": "secretsmanager:GetSecretValue",
+       "Effect": "Allow",
+       "Resource": "arn:aws:secretsmanager:ap-south-1:101374115637:secret:medmelo/cognito/config-*"
+      },
+      {
+       "Action": "secretsmanager:GetSecretValue",
+       "Effect": "Allow",
+       "Resource": "arn:aws:secretsmanager:ap-south-1:101374115637:secret:medmelo/google/oauth-*"
+      },
+      {
+       "Action": "secretsmanager:GetSecretValue",
+       "Effect": "Allow",
+       "Resource": "arn:aws:secretsmanager:ap-south-1:101374115637:secret:medmelo/ses/config-*"
+      },
+      {
+       "Action": [
+        "sqs:ReceiveMessage",
+        "sqs:ChangeMessageVisibility",
+        "sqs:GetQueueUrl",
+        "sqs:DeleteMessage",
+        "sqs:GetQueueAttributes"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "ExamResultsQueue921E4EFA",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "LambdaCoreServiceRoleDefaultPolicy8E94CE57",
+    "Roles": [
+     {
+      "Ref": "LambdaCoreServiceRole9A269AD3"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/LambdaCore/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "LambdaCore8012AD67": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Architectures": [
+     "arm64"
+    ],
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-101374115637-ap-south-1",
+     "S3Key": "ee82714e2402b9c1b2e1fae6520fd521937f38616088edfe6ba675eeb07a82a5.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "NODE_ENV": "production",
+      "EXAM_QUEUE_URL": {
+       "Ref": "ExamResultsQueue921E4EFA"
+      }
+     }
+    },
+    "FunctionName": "medmelo-core-prod",
+    "Handler": "index.handler",
+    "MemorySize": 512,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaCoreServiceRole9A269AD3",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 10,
+    "TracingConfig": {
+     "Mode": "Active"
+    },
+    "VpcConfig": {
+     "SecurityGroupIds": [
+      "sg-093bbec0230c606db"
+     ],
+     "SubnetIds": [
+      "subnet-059095141076e4b0f",
+      "subnet-0bcfc328e35fb2cef",
+      "subnet-0b1e0be3d0fb6ffd6",
+      "subnet-0be5207186b5c2d19"
+     ]
+    }
+   },
+   "DependsOn": [
+    "LambdaCoreServiceRoleDefaultPolicy8E94CE57",
+    "LambdaCoreServiceRole9A269AD3"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/LambdaCore/Resource",
+    "aws:asset:path": "asset.ee82714e2402b9c1b2e1fae6520fd521937f38616088edfe6ba675eeb07a82a5",
+    "aws:asset:is-bundled": true,
+    "aws:asset:property": "Code"
+   }
+  },
+  "LambdaCoreLogRetentionFDC9C0AD": {
+   "Type": "Custom::LogRetention",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+      "Arn"
+     ]
+    },
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/lambda/",
+       {
+        "Ref": "LambdaCore8012AD67"
+       }
+      ]
+     ]
+    },
+    "RetentionInDays": 90
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/LambdaCore/LogRetention/Resource"
+   }
+  },
+  "LambdaCoreEventInvokeConfig13ADBB03": {
+   "Type": "AWS::Lambda::EventInvokeConfig",
+   "Properties": {
+    "DestinationConfig": {
+     "OnFailure": {
+      "Destination": {
+       "Fn::GetAtt": [
+        "LambdaAsyncDLQ1D42C404",
+        "Arn"
+       ]
+      }
+     }
+    },
+    "FunctionName": {
+     "Ref": "LambdaCore8012AD67"
+    },
+    "Qualifier": "$LATEST"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/LambdaCore/EventInvokeConfig/Resource"
+   }
+  },
+  "LambdaCoreSqsEventSourceMedmeloApiStackExamResultsQueueE385BA2C09AC5E7B": {
+   "Type": "AWS::Lambda::EventSourceMapping",
+   "Properties": {
+    "BatchSize": 5,
+    "EventSourceArn": {
+     "Fn::GetAtt": [
+      "ExamResultsQueue921E4EFA",
+      "Arn"
+     ]
+    },
+    "FunctionName": {
+     "Ref": "LambdaCore8012AD67"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/LambdaCore/SqsEventSource:MedmeloApiStackExamResultsQueueE385BA2C/Resource"
+   }
+  },
+  "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole/Resource"
+   }
+  },
+  "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:PutRetentionPolicy",
+        "logs:DeleteRetentionPolicy"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
+    "Roles": [
+     {
+      "Ref": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Handler": "index.handler",
+    "Runtime": "nodejs22.x",
+    "Timeout": 900,
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-101374115637-ap-south-1",
+     "S3Key": "2819175352ad1ce0dae768e83fc328fb70fb5f10b4a8ff0ccbcb791f02b0716d.zip"
+    },
+    "Role": {
+     "Fn::GetAtt": [
+      "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
+      "Arn"
+     ]
+    }
+   },
+   "DependsOn": [
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/Resource",
+    "aws:asset:path": "asset.2819175352ad1ce0dae768e83fc328fb70fb5f10b4a8ff0ccbcb791f02b0716d",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "LambdaExamServiceRole179CB2B8": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/LambdaExam/ServiceRole/Resource"
+   }
+  },
+  "LambdaExamServiceRoleDefaultPolicyCB6B1E73": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "xray:PutTraceSegments",
+        "xray:PutTelemetryRecords"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "sqs:SendMessage",
+        "sqs:GetQueueAttributes",
+        "sqs:GetQueueUrl"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "LambdaAsyncDLQ1D42C404",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": [
+        "sqs:SendMessage",
+        "sqs:GetQueueAttributes",
+        "sqs:GetQueueUrl"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "ExamResultsQueue921E4EFA",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": "secretsmanager:GetSecretValue",
+       "Effect": "Allow",
+       "Resource": "arn:aws:secretsmanager:ap-south-1:101374115637:secret:medmelo/aurora/credentials-*"
+      },
+      {
+       "Action": "secretsmanager:GetSecretValue",
+       "Effect": "Allow",
+       "Resource": "arn:aws:secretsmanager:ap-south-1:101374115637:secret:medmelo/redis/auth-*"
+      },
+      {
+       "Action": "secretsmanager:GetSecretValue",
+       "Effect": "Allow",
+       "Resource": "arn:aws:secretsmanager:ap-south-1:101374115637:secret:medmelo/cognito/config-*"
+      },
+      {
+       "Action": "secretsmanager:GetSecretValue",
+       "Effect": "Allow",
+       "Resource": "arn:aws:secretsmanager:ap-south-1:101374115637:secret:medmelo/google/oauth-*"
+      },
+      {
+       "Action": "secretsmanager:GetSecretValue",
+       "Effect": "Allow",
+       "Resource": "arn:aws:secretsmanager:ap-south-1:101374115637:secret:medmelo/ses/config-*"
+      },
+      {
+       "Action": [
+        "ses:SendEmail",
+        "ses:SendTemplatedEmail"
+       ],
+       "Effect": "Allow",
+       "Resource": "arn:aws:ses:ap-south-1:101374115637:identity/medmelo.com"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "LambdaExamServiceRoleDefaultPolicyCB6B1E73",
+    "Roles": [
+     {
+      "Ref": "LambdaExamServiceRole179CB2B8"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/LambdaExam/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "LambdaExamC9765BD2": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Architectures": [
+     "arm64"
+    ],
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-101374115637-ap-south-1",
+     "S3Key": "d6ab2fba9ed524957633f3df928826e888b44cc73cba09a20289a30e18b32827.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "NODE_ENV": "production",
+      "EXAM_QUEUE_URL": {
+       "Ref": "ExamResultsQueue921E4EFA"
+      }
+     }
+    },
+    "FunctionName": "medmelo-exam-prod",
+    "Handler": "index.handler",
+    "MemorySize": 1024,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaExamServiceRole179CB2B8",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 30,
+    "TracingConfig": {
+     "Mode": "Active"
+    },
+    "VpcConfig": {
+     "SecurityGroupIds": [
+      "sg-093bbec0230c606db"
+     ],
+     "SubnetIds": [
+      "subnet-059095141076e4b0f",
+      "subnet-0bcfc328e35fb2cef",
+      "subnet-0b1e0be3d0fb6ffd6",
+      "subnet-0be5207186b5c2d19"
+     ]
+    }
+   },
+   "DependsOn": [
+    "LambdaExamServiceRoleDefaultPolicyCB6B1E73",
+    "LambdaExamServiceRole179CB2B8"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/LambdaExam/Resource",
+    "aws:asset:path": "asset.d6ab2fba9ed524957633f3df928826e888b44cc73cba09a20289a30e18b32827",
+    "aws:asset:is-bundled": true,
+    "aws:asset:property": "Code"
+   }
+  },
+  "LambdaExamLogRetentionF70484CA": {
+   "Type": "Custom::LogRetention",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+      "Arn"
+     ]
+    },
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/lambda/",
+       {
+        "Ref": "LambdaExamC9765BD2"
+       }
+      ]
+     ]
+    },
+    "RetentionInDays": 90
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/LambdaExam/LogRetention/Resource"
+   }
+  },
+  "LambdaExamEventInvokeConfig672A9191": {
+   "Type": "AWS::Lambda::EventInvokeConfig",
+   "Properties": {
+    "DestinationConfig": {
+     "OnFailure": {
+      "Destination": {
+       "Fn::GetAtt": [
+        "LambdaAsyncDLQ1D42C404",
+        "Arn"
+       ]
+      }
+     }
+    },
+    "FunctionName": {
+     "Ref": "LambdaExamC9765BD2"
+    },
+    "Qualifier": "$LATEST"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/LambdaExam/EventInvokeConfig/Resource"
+   }
+  },
+  "LambdaAdminServiceRoleD5668673": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/LambdaAdmin/ServiceRole/Resource"
+   }
+  },
+  "LambdaAdminServiceRoleDefaultPolicyC824F21C": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "xray:PutTraceSegments",
+        "xray:PutTelemetryRecords"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "sqs:SendMessage",
+        "sqs:GetQueueAttributes",
+        "sqs:GetQueueUrl"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "LambdaAsyncDLQ1D42C404",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": "secretsmanager:GetSecretValue",
+       "Effect": "Allow",
+       "Resource": "arn:aws:secretsmanager:ap-south-1:101374115637:secret:medmelo/aurora/credentials-*"
+      },
+      {
+       "Action": "secretsmanager:GetSecretValue",
+       "Effect": "Allow",
+       "Resource": "arn:aws:secretsmanager:ap-south-1:101374115637:secret:medmelo/redis/auth-*"
+      },
+      {
+       "Action": "secretsmanager:GetSecretValue",
+       "Effect": "Allow",
+       "Resource": "arn:aws:secretsmanager:ap-south-1:101374115637:secret:medmelo/cognito/config-*"
+      },
+      {
+       "Action": "secretsmanager:GetSecretValue",
+       "Effect": "Allow",
+       "Resource": "arn:aws:secretsmanager:ap-south-1:101374115637:secret:medmelo/google/oauth-*"
+      },
+      {
+       "Action": "secretsmanager:GetSecretValue",
+       "Effect": "Allow",
+       "Resource": "arn:aws:secretsmanager:ap-south-1:101374115637:secret:medmelo/ses/config-*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "LambdaAdminServiceRoleDefaultPolicyC824F21C",
+    "Roles": [
+     {
+      "Ref": "LambdaAdminServiceRoleD5668673"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/LambdaAdmin/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "LambdaAdmin57C68951": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Architectures": [
+     "arm64"
+    ],
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-101374115637-ap-south-1",
+     "S3Key": "0a2de9b6f278215b3fc038c3d620c6ab46cbeed373814061442f0b05ac9c6f06.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "NODE_ENV": "production",
+      "EXAM_QUEUE_URL": {
+       "Ref": "ExamResultsQueue921E4EFA"
+      }
+     }
+    },
+    "FunctionName": "medmelo-admin-prod",
+    "Handler": "index.handler",
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaAdminServiceRoleD5668673",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 30,
+    "TracingConfig": {
+     "Mode": "Active"
+    },
+    "VpcConfig": {
+     "SecurityGroupIds": [
+      "sg-093bbec0230c606db"
+     ],
+     "SubnetIds": [
+      "subnet-059095141076e4b0f",
+      "subnet-0bcfc328e35fb2cef",
+      "subnet-0b1e0be3d0fb6ffd6",
+      "subnet-0be5207186b5c2d19"
+     ]
+    }
+   },
+   "DependsOn": [
+    "LambdaAdminServiceRoleDefaultPolicyC824F21C",
+    "LambdaAdminServiceRoleD5668673"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/LambdaAdmin/Resource",
+    "aws:asset:path": "asset.0a2de9b6f278215b3fc038c3d620c6ab46cbeed373814061442f0b05ac9c6f06",
+    "aws:asset:is-bundled": true,
+    "aws:asset:property": "Code"
+   }
+  },
+  "LambdaAdminLogRetentionBFE83ECF": {
+   "Type": "Custom::LogRetention",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+      "Arn"
+     ]
+    },
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/lambda/",
+       {
+        "Ref": "LambdaAdmin57C68951"
+       }
+      ]
+     ]
+    },
+    "RetentionInDays": 90
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/LambdaAdmin/LogRetention/Resource"
+   }
+  },
+  "LambdaAdminEventInvokeConfig6BE385CD": {
+   "Type": "AWS::Lambda::EventInvokeConfig",
+   "Properties": {
+    "DestinationConfig": {
+     "OnFailure": {
+      "Destination": {
+       "Fn::GetAtt": [
+        "LambdaAsyncDLQ1D42C404",
+        "Arn"
+       ]
+      }
+     }
+    },
+    "FunctionName": {
+     "Ref": "LambdaAdmin57C68951"
+    },
+    "Qualifier": "$LATEST"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/LambdaAdmin/EventInvokeConfig/Resource"
+   }
+  },
+  "LambdaMediaServiceRole1AAC6E43": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/LambdaMedia/ServiceRole/Resource"
+   }
+  },
+  "LambdaMediaServiceRoleDefaultPolicy81F24995": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "xray:PutTraceSegments",
+        "xray:PutTelemetryRecords"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      },
+      {
+       "Action": [
+        "sqs:SendMessage",
+        "sqs:GetQueueAttributes",
+        "sqs:GetQueueUrl"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "LambdaAsyncDLQ1D42C404",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": "secretsmanager:GetSecretValue",
+       "Effect": "Allow",
+       "Resource": "arn:aws:secretsmanager:ap-south-1:101374115637:secret:medmelo/aurora/credentials-*"
+      },
+      {
+       "Action": "secretsmanager:GetSecretValue",
+       "Effect": "Allow",
+       "Resource": "arn:aws:secretsmanager:ap-south-1:101374115637:secret:medmelo/redis/auth-*"
+      },
+      {
+       "Action": "secretsmanager:GetSecretValue",
+       "Effect": "Allow",
+       "Resource": "arn:aws:secretsmanager:ap-south-1:101374115637:secret:medmelo/cognito/config-*"
+      },
+      {
+       "Action": "secretsmanager:GetSecretValue",
+       "Effect": "Allow",
+       "Resource": "arn:aws:secretsmanager:ap-south-1:101374115637:secret:medmelo/google/oauth-*"
+      },
+      {
+       "Action": "secretsmanager:GetSecretValue",
+       "Effect": "Allow",
+       "Resource": "arn:aws:secretsmanager:ap-south-1:101374115637:secret:medmelo/ses/config-*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "LambdaMediaServiceRoleDefaultPolicy81F24995",
+    "Roles": [
+     {
+      "Ref": "LambdaMediaServiceRole1AAC6E43"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/LambdaMedia/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "LambdaMedia28E3844F": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Architectures": [
+     "arm64"
+    ],
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-101374115637-ap-south-1",
+     "S3Key": "94d523de32b358b5a81145f3140d6eaf59b67e5716f696cd0b8fdd13e466abc7.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "NODE_ENV": "production",
+      "EXAM_QUEUE_URL": {
+       "Ref": "ExamResultsQueue921E4EFA"
+      }
+     }
+    },
+    "FunctionName": "medmelo-media-prod",
+    "Handler": "index.handler",
+    "MemorySize": 128,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaMediaServiceRole1AAC6E43",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x",
+    "Timeout": 5,
+    "TracingConfig": {
+     "Mode": "Active"
+    },
+    "VpcConfig": {
+     "SecurityGroupIds": [
+      "sg-093bbec0230c606db"
+     ],
+     "SubnetIds": [
+      "subnet-059095141076e4b0f",
+      "subnet-0bcfc328e35fb2cef",
+      "subnet-0b1e0be3d0fb6ffd6",
+      "subnet-0be5207186b5c2d19"
+     ]
+    }
+   },
+   "DependsOn": [
+    "LambdaMediaServiceRoleDefaultPolicy81F24995",
+    "LambdaMediaServiceRole1AAC6E43"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/LambdaMedia/Resource",
+    "aws:asset:path": "asset.94d523de32b358b5a81145f3140d6eaf59b67e5716f696cd0b8fdd13e466abc7",
+    "aws:asset:is-bundled": true,
+    "aws:asset:property": "Code"
+   }
+  },
+  "LambdaMediaLogRetention2E24831A": {
+   "Type": "Custom::LogRetention",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+      "Arn"
+     ]
+    },
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/lambda/",
+       {
+        "Ref": "LambdaMedia28E3844F"
+       }
+      ]
+     ]
+    },
+    "RetentionInDays": 90
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/LambdaMedia/LogRetention/Resource"
+   }
+  },
+  "LambdaMediaEventInvokeConfig8F916D33": {
+   "Type": "AWS::Lambda::EventInvokeConfig",
+   "Properties": {
+    "DestinationConfig": {
+     "OnFailure": {
+      "Destination": {
+       "Fn::GetAtt": [
+        "LambdaAsyncDLQ1D42C404",
+        "Arn"
+       ]
+      }
+     }
+    },
+    "FunctionName": {
+     "Ref": "LambdaMedia28E3844F"
+    },
+    "Qualifier": "$LATEST"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/LambdaMedia/EventInvokeConfig/Resource"
+   }
+  },
+  "ApiAccessLogsE9DF007D": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "RetentionInDays": 30
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/ApiAccessLogs/Resource"
+   }
+  },
+  "ApiAccessLogsPolicyResourcePolicy4D577253": {
+   "Type": "AWS::Logs::ResourcePolicy",
+   "Properties": {
+    "PolicyDocument": {
+     "Fn::Join": [
+      "",
+      [
+       "{\"Statement\":[{\"Action\":[\"logs:CreateLogStream\",\"logs:PutLogEvents\"],\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"apigateway.amazonaws.com\"},\"Resource\":\"",
+       {
+        "Fn::GetAtt": [
+         "ApiAccessLogsE9DF007D",
+         "Arn"
+        ]
+       },
+       "\"}],\"Version\":\"2012-10-17\"}"
+      ]
+     ]
+    },
+    "PolicyName": "MedmeloApiStackApiAccessLogsPolicy536697FA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/ApiAccessLogs/Policy/ResourcePolicy"
+   }
+  },
+  "MedmeloHttpApi44EAED31": {
+   "Type": "AWS::ApiGatewayV2::Api",
+   "Properties": {
+    "Name": "medmelo-api-prod",
+    "ProtocolType": "HTTP"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/MedmeloHttpApi/Resource"
+   }
+  },
+  "MedmeloHttpApiprod365C8425": {
+   "Type": "AWS::ApiGatewayV2::Stage",
+   "Properties": {
+    "AccessLogSettings": {
+     "DestinationArn": {
+      "Fn::GetAtt": [
+       "ApiAccessLogsE9DF007D",
+       "Arn"
+      ]
+     },
+     "Format": "{\"requestId\":\"$context.requestId\",\"ip\":\"$context.identity.sourceIp\",\"requestTime\":\"$context.requestTime\",\"httpMethod\":\"$context.httpMethod\",\"routeKey\":\"$context.routeKey\",\"status\":\"$context.status\",\"protocol\":\"$context.protocol\",\"responseLength\":\"$context.responseLength\",\"integrationError\":\"$context.integrationErrorMessage\"}"
+    },
+    "ApiId": {
+     "Ref": "MedmeloHttpApi44EAED31"
+    },
+    "AutoDeploy": true,
+    "DefaultRouteSettings": {
+     "ThrottlingBurstLimit": 10000,
+     "ThrottlingRateLimit": 5000
+    },
+    "StageName": "prod"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/MedmeloHttpApi/prod/Resource"
+   }
+  },
+  "MedmeloHttpApiANYapiv1examproxyExamInteg81957D0D": {
+   "Type": "AWS::ApiGatewayV2::Integration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "MedmeloHttpApi44EAED31"
+    },
+    "IntegrationType": "AWS_PROXY",
+    "IntegrationUri": {
+     "Fn::GetAtt": [
+      "LambdaExamC9765BD2",
+      "Arn"
+     ]
+    },
+    "PayloadFormatVersion": "2.0"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/MedmeloHttpApi/ANY--api--v1--exam--{proxy+}/ExamInteg/Resource"
+   }
+  },
+  "MedmeloHttpApiANYapiv1examproxyExamIntegPermissionAB21F71E": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LambdaExamC9765BD2",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:ap-south-1:101374115637:",
+       {
+        "Ref": "MedmeloHttpApi44EAED31"
+       },
+       "/*/*/api/v1/exam/{proxy+}"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/MedmeloHttpApi/ANY--api--v1--exam--{proxy+}/ExamInteg-Permission"
+   }
+  },
+  "MedmeloHttpApiANYapiv1examproxy0605EF1B": {
+   "Type": "AWS::ApiGatewayV2::Route",
+   "Properties": {
+    "ApiId": {
+     "Ref": "MedmeloHttpApi44EAED31"
+    },
+    "AuthorizationType": "JWT",
+    "AuthorizerId": {
+     "Ref": "MedmeloHttpApiCognitoAuth8838D8F8"
+    },
+    "RouteKey": "ANY /api/v1/exam/{proxy+}",
+    "Target": {
+     "Fn::Join": [
+      "",
+      [
+       "integrations/",
+       {
+        "Ref": "MedmeloHttpApiANYapiv1examproxyExamInteg81957D0D"
+       }
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/MedmeloHttpApi/ANY--api--v1--exam--{proxy+}/Resource"
+   }
+  },
+  "MedmeloHttpApiCognitoAuth8838D8F8": {
+   "Type": "AWS::ApiGatewayV2::Authorizer",
+   "Properties": {
+    "ApiId": {
+     "Ref": "MedmeloHttpApi44EAED31"
+    },
+    "AuthorizerType": "JWT",
+    "IdentitySource": [
+     "$request.header.Authorization"
+    ],
+    "JwtConfiguration": {
+     "Audience": [
+      "3r1fht3ht9g1cdv3n0f7g8rc1r"
+     ],
+     "Issuer": "https://cognito-idp.ap-south-1.amazonaws.com/ap-south-1_xo19c3jCI"
+    },
+    "Name": "CognitoAuth"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/MedmeloHttpApi/CognitoAuth/Resource"
+   }
+  },
+  "MedmeloHttpApiANYapiv1coreproxyCoreInteg0AA47B2E": {
+   "Type": "AWS::ApiGatewayV2::Integration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "MedmeloHttpApi44EAED31"
+    },
+    "IntegrationType": "AWS_PROXY",
+    "IntegrationUri": {
+     "Fn::GetAtt": [
+      "LambdaCore8012AD67",
+      "Arn"
+     ]
+    },
+    "PayloadFormatVersion": "2.0"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/MedmeloHttpApi/ANY--api--v1--core--{proxy+}/CoreInteg/Resource"
+   }
+  },
+  "MedmeloHttpApiANYapiv1coreproxyCoreIntegPermissionB4E69857": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LambdaCore8012AD67",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:ap-south-1:101374115637:",
+       {
+        "Ref": "MedmeloHttpApi44EAED31"
+       },
+       "/*/*/api/v1/core/{proxy+}"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/MedmeloHttpApi/ANY--api--v1--core--{proxy+}/CoreInteg-Permission"
+   }
+  },
+  "MedmeloHttpApiANYapiv1coreproxy350736BB": {
+   "Type": "AWS::ApiGatewayV2::Route",
+   "Properties": {
+    "ApiId": {
+     "Ref": "MedmeloHttpApi44EAED31"
+    },
+    "AuthorizationType": "JWT",
+    "AuthorizerId": {
+     "Ref": "MedmeloHttpApiCognitoAuth8838D8F8"
+    },
+    "RouteKey": "ANY /api/v1/core/{proxy+}",
+    "Target": {
+     "Fn::Join": [
+      "",
+      [
+       "integrations/",
+       {
+        "Ref": "MedmeloHttpApiANYapiv1coreproxyCoreInteg0AA47B2E"
+       }
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/MedmeloHttpApi/ANY--api--v1--core--{proxy+}/Resource"
+   }
+  },
+  "MedmeloHttpApiANYapiv1adminproxyAdminInteg5451F636": {
+   "Type": "AWS::ApiGatewayV2::Integration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "MedmeloHttpApi44EAED31"
+    },
+    "IntegrationType": "AWS_PROXY",
+    "IntegrationUri": {
+     "Fn::GetAtt": [
+      "LambdaAdmin57C68951",
+      "Arn"
+     ]
+    },
+    "PayloadFormatVersion": "2.0"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/MedmeloHttpApi/ANY--api--v1--admin--{proxy+}/AdminInteg/Resource"
+   }
+  },
+  "MedmeloHttpApiANYapiv1adminproxyAdminIntegPermissionC836467B": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LambdaAdmin57C68951",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:ap-south-1:101374115637:",
+       {
+        "Ref": "MedmeloHttpApi44EAED31"
+       },
+       "/*/*/api/v1/admin/{proxy+}"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/MedmeloHttpApi/ANY--api--v1--admin--{proxy+}/AdminInteg-Permission"
+   }
+  },
+  "MedmeloHttpApiANYapiv1adminproxy7B0EE4D4": {
+   "Type": "AWS::ApiGatewayV2::Route",
+   "Properties": {
+    "ApiId": {
+     "Ref": "MedmeloHttpApi44EAED31"
+    },
+    "AuthorizationType": "JWT",
+    "AuthorizerId": {
+     "Ref": "MedmeloHttpApiCognitoAuth8838D8F8"
+    },
+    "RouteKey": "ANY /api/v1/admin/{proxy+}",
+    "Target": {
+     "Fn::Join": [
+      "",
+      [
+       "integrations/",
+       {
+        "Ref": "MedmeloHttpApiANYapiv1adminproxyAdminInteg5451F636"
+       }
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/MedmeloHttpApi/ANY--api--v1--admin--{proxy+}/Resource"
+   }
+  },
+  "MedmeloHttpApiANYapiv1mediaproxyMediaIntegFCC12F2E": {
+   "Type": "AWS::ApiGatewayV2::Integration",
+   "Properties": {
+    "ApiId": {
+     "Ref": "MedmeloHttpApi44EAED31"
+    },
+    "IntegrationType": "AWS_PROXY",
+    "IntegrationUri": {
+     "Fn::GetAtt": [
+      "LambdaMedia28E3844F",
+      "Arn"
+     ]
+    },
+    "PayloadFormatVersion": "2.0"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/MedmeloHttpApi/ANY--api--v1--media--{proxy+}/MediaInteg/Resource"
+   }
+  },
+  "MedmeloHttpApiANYapiv1mediaproxyMediaIntegPermission6D0D6268": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "LambdaMedia28E3844F",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:ap-south-1:101374115637:",
+       {
+        "Ref": "MedmeloHttpApi44EAED31"
+       },
+       "/*/*/api/v1/media/{proxy+}"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/MedmeloHttpApi/ANY--api--v1--media--{proxy+}/MediaInteg-Permission"
+   }
+  },
+  "MedmeloHttpApiANYapiv1mediaproxyF9B031D0": {
+   "Type": "AWS::ApiGatewayV2::Route",
+   "Properties": {
+    "ApiId": {
+     "Ref": "MedmeloHttpApi44EAED31"
+    },
+    "AuthorizationType": "JWT",
+    "AuthorizerId": {
+     "Ref": "MedmeloHttpApiCognitoAuth8838D8F8"
+    },
+    "RouteKey": "ANY /api/v1/media/{proxy+}",
+    "Target": {
+     "Fn::Join": [
+      "",
+      [
+       "integrations/",
+       {
+        "Ref": "MedmeloHttpApiANYapiv1mediaproxyMediaIntegFCC12F2E"
+       }
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/MedmeloHttpApi/ANY--api--v1--media--{proxy+}/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/2VRW27CMBA8C/9mSwMXgKgPJNrScABkwiY1SdZpdh1Eo9y9skOD2n7N7Gg83kcE0WIBs4k+8zQ9FtPSHKDbiU4LlSBb16So9Jn3HX8ydO8OHao4o0B6VerqcNR7skc8MbwGeHSUirGkjK6gS2wZHgTc2tKkF18OrFc832tmFIalB8VzWLm0QFlpxms8dHFGY+pDiyRram2BsaXM5D7uvxiUXej/Rde1oZvvn7rFpjLMxlKvSpszdBubJyhI4ceNzZ8a62pvHfnPcm4j/VZ6pWuTa8GzvrQRdM8i9bI23ujBlzvRedjNQLyUWCcDW5Ng3ujQQJzRn/LmWzr5sI35wiZEj1Xfq7BRn30dc7xnnNGbk9pJr/zl4MR3bbSA+whmkxMbM20ciakQkgG/AUsAByMkAgAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloApiStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "ApiUrl": {
+   "Description": "Medmelo HTTP API URL",
+   "Value": "undefinedprod"
+  },
+  "ExamQueueUrl": {
+   "Description": "Exam Results SQS Queue URL",
+   "Value": {
+    "Ref": "ExamResultsQueue921E4EFA"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

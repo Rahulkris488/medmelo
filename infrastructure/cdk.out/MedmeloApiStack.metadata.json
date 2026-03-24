@@ -1,0 +1,296 @@
+{
+  "/MedmeloApiStack/ApiUrl": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiUrl"
+    }
+  ],
+  "/MedmeloApiStack/ExamQueueUrl": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExamQueueUrl"
+    }
+  ],
+  "/MedmeloApiStack/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    }
+  ],
+  "/MedmeloApiStack/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    }
+  ],
+  "/MedmeloApiStack/ExamResultsDLQ/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExamResultsDLQ4D285B3A"
+    }
+  ],
+  "/MedmeloApiStack/ExamResultsQueue/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExamResultsQueue921E4EFA"
+    }
+  ],
+  "/MedmeloApiStack/LambdaAsyncDLQ/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaAsyncDLQ1D42C404"
+    }
+  ],
+  "/MedmeloApiStack/LambdaCore/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaCore8012AD67"
+    }
+  ],
+  "/MedmeloApiStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A"
+    }
+  ],
+  "/MedmeloApiStack/LambdaExam/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaExamC9765BD2"
+    }
+  ],
+  "/MedmeloApiStack/LambdaAdmin/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaAdmin57C68951"
+    }
+  ],
+  "/MedmeloApiStack/LambdaMedia/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaMedia28E3844F"
+    }
+  ],
+  "/MedmeloApiStack/ApiAccessLogs/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiAccessLogsE9DF007D"
+    }
+  ],
+  "/MedmeloApiStack/MedmeloHttpApi/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MedmeloHttpApi44EAED31"
+    }
+  ],
+  "/MedmeloApiStack/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    }
+  ],
+  "/MedmeloApiStack/LambdaCore/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaCoreServiceRole9A269AD3"
+    }
+  ],
+  "/MedmeloApiStack/LambdaCore/LogRetention/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaCoreLogRetentionFDC9C0AD"
+    }
+  ],
+  "/MedmeloApiStack/LambdaCore/EventInvokeConfig/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaCoreEventInvokeConfig13ADBB03"
+    }
+  ],
+  "/MedmeloApiStack/LambdaCore/SqsEventSource:MedmeloApiStackExamResultsQueueE385BA2C/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaCoreSqsEventSourceMedmeloApiStackExamResultsQueueE385BA2C09AC5E7B"
+    }
+  ],
+  "/MedmeloApiStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB"
+    }
+  ],
+  "/MedmeloApiStack/LambdaExam/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaExamServiceRole179CB2B8"
+    }
+  ],
+  "/MedmeloApiStack/LambdaExam/LogRetention/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaExamLogRetentionF70484CA"
+    }
+  ],
+  "/MedmeloApiStack/LambdaExam/EventInvokeConfig/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaExamEventInvokeConfig672A9191"
+    }
+  ],
+  "/MedmeloApiStack/LambdaAdmin/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaAdminServiceRoleD5668673"
+    }
+  ],
+  "/MedmeloApiStack/LambdaAdmin/LogRetention/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaAdminLogRetentionBFE83ECF"
+    }
+  ],
+  "/MedmeloApiStack/LambdaAdmin/EventInvokeConfig/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaAdminEventInvokeConfig6BE385CD"
+    }
+  ],
+  "/MedmeloApiStack/LambdaMedia/ServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaMediaServiceRole1AAC6E43"
+    }
+  ],
+  "/MedmeloApiStack/LambdaMedia/LogRetention/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaMediaLogRetention2E24831A"
+    }
+  ],
+  "/MedmeloApiStack/LambdaMedia/EventInvokeConfig/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaMediaEventInvokeConfig8F916D33"
+    }
+  ],
+  "/MedmeloApiStack/ApiAccessLogs/Policy/ResourcePolicy": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiAccessLogsPolicyResourcePolicy4D577253"
+    }
+  ],
+  "/MedmeloApiStack/MedmeloHttpApi/prod/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MedmeloHttpApiprod365C8425"
+    }
+  ],
+  "/MedmeloApiStack/MedmeloHttpApi/ANY--api--v1--exam--{proxy+}/ExamInteg-Permission": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MedmeloHttpApiANYapiv1examproxyExamIntegPermissionAB21F71E"
+    }
+  ],
+  "/MedmeloApiStack/MedmeloHttpApi/ANY--api--v1--exam--{proxy+}/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MedmeloHttpApiANYapiv1examproxy0605EF1B"
+    }
+  ],
+  "/MedmeloApiStack/MedmeloHttpApi/CognitoAuth/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MedmeloHttpApiCognitoAuth8838D8F8"
+    }
+  ],
+  "/MedmeloApiStack/MedmeloHttpApi/ANY--api--v1--core--{proxy+}/CoreInteg-Permission": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MedmeloHttpApiANYapiv1coreproxyCoreIntegPermissionB4E69857"
+    }
+  ],
+  "/MedmeloApiStack/MedmeloHttpApi/ANY--api--v1--core--{proxy+}/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MedmeloHttpApiANYapiv1coreproxy350736BB"
+    }
+  ],
+  "/MedmeloApiStack/MedmeloHttpApi/ANY--api--v1--admin--{proxy+}/AdminInteg-Permission": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MedmeloHttpApiANYapiv1adminproxyAdminIntegPermissionC836467B"
+    }
+  ],
+  "/MedmeloApiStack/MedmeloHttpApi/ANY--api--v1--admin--{proxy+}/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MedmeloHttpApiANYapiv1adminproxy7B0EE4D4"
+    }
+  ],
+  "/MedmeloApiStack/MedmeloHttpApi/ANY--api--v1--media--{proxy+}/MediaInteg-Permission": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MedmeloHttpApiANYapiv1mediaproxyMediaIntegPermission6D0D6268"
+    }
+  ],
+  "/MedmeloApiStack/MedmeloHttpApi/ANY--api--v1--media--{proxy+}/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MedmeloHttpApiANYapiv1mediaproxyF9B031D0"
+    }
+  ],
+  "/MedmeloApiStack/LambdaCore/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaCoreServiceRoleDefaultPolicy8E94CE57"
+    }
+  ],
+  "/MedmeloApiStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB"
+    }
+  ],
+  "/MedmeloApiStack/LambdaExam/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaExamServiceRoleDefaultPolicyCB6B1E73"
+    }
+  ],
+  "/MedmeloApiStack/LambdaAdmin/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaAdminServiceRoleDefaultPolicyC824F21C"
+    }
+  ],
+  "/MedmeloApiStack/LambdaMedia/ServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaMediaServiceRoleDefaultPolicy81F24995"
+    }
+  ],
+  "/MedmeloApiStack/MedmeloHttpApi/ANY--api--v1--exam--{proxy+}/ExamInteg/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MedmeloHttpApiANYapiv1examproxyExamInteg81957D0D"
+    }
+  ],
+  "/MedmeloApiStack/MedmeloHttpApi/ANY--api--v1--core--{proxy+}/CoreInteg/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MedmeloHttpApiANYapiv1coreproxyCoreInteg0AA47B2E"
+    }
+  ],
+  "/MedmeloApiStack/MedmeloHttpApi/ANY--api--v1--admin--{proxy+}/AdminInteg/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MedmeloHttpApiANYapiv1adminproxyAdminInteg5451F636"
+    }
+  ],
+  "/MedmeloApiStack/MedmeloHttpApi/ANY--api--v1--media--{proxy+}/MediaInteg/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MedmeloHttpApiANYapiv1mediaproxyMediaIntegFCC12F2E"
+    }
+  ]
+}

@@ -18,7 +18,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::101374115637:role/cdk-hnb659fds-deploy-role-101374115637-ap-south-1",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::101374115637:role/cdk-hnb659fds-cfn-exec-role-101374115637-ap-south-1",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-101374115637-ap-south-1/c9936d878a265813bbc4ab861ad956f2c195882ab606cdb85d050dc6bb5c2962.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-101374115637-ap-south-1/4ab0f77d6ace99816d066bafe88139e2d22abe39acfe84a45a97684868ae0558.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -35,6 +35,76 @@
       ],
       "additionalMetadataFile": "MedmeloDataStack.metadata.json",
       "displayName": "MedmeloDataStack"
+    },
+    "MedmeloStorageStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "MedmeloStorageStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "MedmeloStorageStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://101374115637/ap-south-1",
+      "properties": {
+        "templateFile": "MedmeloStorageStack.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::101374115637:role/cdk-hnb659fds-deploy-role-101374115637-ap-south-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::101374115637:role/cdk-hnb659fds-cfn-exec-role-101374115637-ap-south-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-101374115637-ap-south-1/053b8df80d8c4084309e541a88097d84af6124234a9fc4f9d8f47ccd223ea0c8.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "MedmeloStorageStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::101374115637:role/cdk-hnb659fds-lookup-role-101374115637-ap-south-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "MedmeloStorageStack.assets"
+      ],
+      "additionalMetadataFile": "MedmeloStorageStack.metadata.json",
+      "displayName": "MedmeloStorageStack"
+    },
+    "MedmeloApiStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "MedmeloApiStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "MedmeloApiStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://101374115637/ap-south-1",
+      "properties": {
+        "templateFile": "MedmeloApiStack.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::101374115637:role/cdk-hnb659fds-deploy-role-101374115637-ap-south-1",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::101374115637:role/cdk-hnb659fds-cfn-exec-role-101374115637-ap-south-1",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-101374115637-ap-south-1/e26c99b1cc57b724f8b0cfdf8f91a2d89060ed7a56b16ddb1e02daddee6809e5.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "MedmeloApiStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::101374115637:role/cdk-hnb659fds-lookup-role-101374115637-ap-south-1",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "MedmeloApiStack.assets"
+      ],
+      "additionalMetadataFile": "MedmeloApiStack.metadata.json",
+      "displayName": "MedmeloApiStack"
     },
     "Tree": {
       "type": "cdk:tree",

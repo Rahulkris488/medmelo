@@ -1,0 +1,80 @@
+{
+  "/MedmeloStorageStack/Custom::S3AutoDeleteObjectsCustomResourceProvider": [
+    {
+      "type": "aws:cdk:is-custom-resource-handler-customResourceProvider",
+      "data": true
+    }
+  ],
+  "/MedmeloStorageStack/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    }
+  ],
+  "/MedmeloStorageStack/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    }
+  ],
+  "/MedmeloStorageStack/MediaProdBucket/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MediaProdBucketEBD06DE8"
+    }
+  ],
+  "/MedmeloStorageStack/UploadsStagingBucket/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "UploadsStagingBucketDFDCAD93"
+    },
+    {
+      "type": "aws:cdk:analytics:mixin",
+      "data": {
+        "mixin": "aws-cdk-lib.aws_s3.mixins.BucketAutoDeleteObjects"
+      }
+    }
+  ],
+  "/MedmeloStorageStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092"
+    }
+  ],
+  "/MedmeloStorageStack/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F"
+    }
+  ],
+  "/MedmeloStorageStack/AdminSPABucket/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AdminSPABucketCDDC27BC"
+    }
+  ],
+  "/MedmeloStorageStack/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    }
+  ],
+  "/MedmeloStorageStack/UploadsStagingBucket/Policy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "UploadsStagingBucketPolicy25A51D2E"
+    },
+    {
+      "type": "aws:cdk:analytics:mixin",
+      "data": {
+        "mixin": "aws-cdk-lib.aws_s3.mixins.BucketPolicyStatements"
+      }
+    }
+  ],
+  "/MedmeloStorageStack/UploadsStagingBucket/AutoDeleteObjectsCustomResource/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "UploadsStagingBucketAutoDeleteObjectsCustomResource46D0E9BC"
+    }
+  ]
+}
