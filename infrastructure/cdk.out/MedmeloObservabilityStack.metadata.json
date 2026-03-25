@@ -1,0 +1,110 @@
+{
+  "/MedmeloObservabilityStack/AlertTopicArn": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AlertTopicArn"
+    }
+  ],
+  "/MedmeloObservabilityStack/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    }
+  ],
+  "/MedmeloObservabilityStack/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    }
+  ],
+  "/MedmeloObservabilityStack/MedmeloAlerts/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MedmeloAlerts0C4E1D15"
+    }
+  ],
+  "/MedmeloObservabilityStack/CoreLogGroup/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CoreLogGroupECDC63E5"
+    }
+  ],
+  "/MedmeloObservabilityStack/ExamLogGroup/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExamLogGroup379F4F42"
+    }
+  ],
+  "/MedmeloObservabilityStack/AdminLogGroup/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AdminLogGroup7F6086AD"
+    }
+  ],
+  "/MedmeloObservabilityStack/MediaLogGroup/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MediaLogGroupAD312AC2"
+    }
+  ],
+  "/MedmeloObservabilityStack/LambdaCoreErrorRate/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaCoreErrorRateA95444E5"
+    }
+  ],
+  "/MedmeloObservabilityStack/LambdaExamErrorRate/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaExamErrorRate15678F1D"
+    }
+  ],
+  "/MedmeloObservabilityStack/APIGateway5xxRate/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "APIGateway5xxRateECC0EC8F"
+    }
+  ],
+  "/MedmeloObservabilityStack/AuroraACUHigh/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AuroraACUHighD5299F60"
+    }
+  ],
+  "/MedmeloObservabilityStack/RedisCacheMissHigh/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RedisCacheMissHigh279DB4A6"
+    }
+  ],
+  "/MedmeloObservabilityStack/DynamoDBThrottles/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DynamoDBThrottles4F7F20A3"
+    }
+  ],
+  "/MedmeloObservabilityStack/MonthlyBilling5k/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MonthlyBilling5kDC8ECDA6"
+    }
+  ],
+  "/MedmeloObservabilityStack/MonthlyBilling15k/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MonthlyBilling15k41A74444"
+    }
+  ],
+  "/MedmeloObservabilityStack/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    }
+  ],
+  "/MedmeloObservabilityStack/MedmeloAlerts/medmelodev.app@gmail.com/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MedmeloAlertsmedmelodevappgmailcom48B87F46"
+    }
+  ]
+}

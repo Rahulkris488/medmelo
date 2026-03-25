@@ -1,0 +1,1 @@
+{"Template":{"TemplateName":"email-verification","SubjectPart":"Verify your Medmelo account","HtmlPart":"<h1>Welcome to Medmelo!</h1><p>Please verify your email: {{link}}</p>","TextPart":"Welcome to Medmelo! Please verify your email: {{link}}"}}

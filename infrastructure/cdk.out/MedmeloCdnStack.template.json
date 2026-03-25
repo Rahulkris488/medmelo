@@ -1,0 +1,557 @@
+{
+ "Resources": {
+  "MedmeloWafAcl": {
+   "Type": "AWS::WAFv2::WebACL",
+   "Properties": {
+    "DefaultAction": {
+     "Allow": {}
+    },
+    "Name": "medmelo-waf-prod",
+    "Rules": [
+     {
+      "Name": "AWSManagedRulesCommonRuleSet",
+      "OverrideAction": {
+       "None": {}
+      },
+      "Priority": 1,
+      "Statement": {
+       "ManagedRuleGroupStatement": {
+        "Name": "AWSManagedRulesCommonRuleSet",
+        "VendorName": "AWS"
+       }
+      },
+      "VisibilityConfig": {
+       "CloudWatchMetricsEnabled": true,
+       "MetricName": "AWSManagedRulesCommonRuleSet",
+       "SampledRequestsEnabled": true
+      }
+     },
+     {
+      "Name": "AWSManagedRulesKnownBadInputsRuleSet",
+      "OverrideAction": {
+       "None": {}
+      },
+      "Priority": 2,
+      "Statement": {
+       "ManagedRuleGroupStatement": {
+        "Name": "AWSManagedRulesKnownBadInputsRuleSet",
+        "VendorName": "AWS"
+       }
+      },
+      "VisibilityConfig": {
+       "CloudWatchMetricsEnabled": true,
+       "MetricName": "AWSManagedRulesKnownBadInputsRuleSet",
+       "SampledRequestsEnabled": true
+      }
+     },
+     {
+      "Name": "AWSManagedRulesSQLiRuleSet",
+      "OverrideAction": {
+       "None": {}
+      },
+      "Priority": 3,
+      "Statement": {
+       "ManagedRuleGroupStatement": {
+        "Name": "AWSManagedRulesSQLiRuleSet",
+        "VendorName": "AWS"
+       }
+      },
+      "VisibilityConfig": {
+       "CloudWatchMetricsEnabled": true,
+       "MetricName": "AWSManagedRulesSQLiRuleSet",
+       "SampledRequestsEnabled": true
+      }
+     },
+     {
+      "Name": "AWSManagedRulesAmazonIpReputationList",
+      "OverrideAction": {
+       "None": {}
+      },
+      "Priority": 4,
+      "Statement": {
+       "ManagedRuleGroupStatement": {
+        "Name": "AWSManagedRulesAmazonIpReputationList",
+        "VendorName": "AWS"
+       }
+      },
+      "VisibilityConfig": {
+       "CloudWatchMetricsEnabled": true,
+       "MetricName": "AWSManagedRulesAmazonIpReputationList",
+       "SampledRequestsEnabled": true
+      }
+     },
+     {
+      "Action": {
+       "Block": {}
+      },
+      "Name": "ApiRateLimit",
+      "Priority": 5,
+      "Statement": {
+       "RateBasedStatement": {
+        "AggregateKeyType": "IP",
+        "Limit": 1000,
+        "ScopeDownStatement": {
+         "ByteMatchStatement": {
+          "FieldToMatch": {
+           "UriPath": {}
+          },
+          "PositionalConstraint": "STARTS_WITH",
+          "SearchString": "/api/",
+          "TextTransformations": [
+           {
+            "Priority": 0,
+            "Type": "NONE"
+           }
+          ]
+         }
+        }
+       }
+      },
+      "VisibilityConfig": {
+       "CloudWatchMetricsEnabled": true,
+       "MetricName": "ApiRateLimit",
+       "SampledRequestsEnabled": true
+      }
+     },
+     {
+      "Action": {
+       "Block": {}
+      },
+      "Name": "BlockMissingUserAgent",
+      "Priority": 6,
+      "Statement": {
+       "NotStatement": {
+        "Statement": {
+         "ByteMatchStatement": {
+          "FieldToMatch": {
+           "SingleHeader": {
+            "Name": "User-Agent"
+           }
+          },
+          "PositionalConstraint": "CONTAINS",
+          "SearchString": "Mozilla",
+          "TextTransformations": [
+           {
+            "Priority": 0,
+            "Type": "NONE"
+           }
+          ]
+         }
+        }
+       }
+      },
+      "VisibilityConfig": {
+       "CloudWatchMetricsEnabled": true,
+       "MetricName": "BlockMissingUserAgent",
+       "SampledRequestsEnabled": true
+      }
+     },
+     {
+      "Name": "AWSManagedRulesLinuxRuleSet",
+      "OverrideAction": {
+       "None": {}
+      },
+      "Priority": 7,
+      "Statement": {
+       "ManagedRuleGroupStatement": {
+        "Name": "AWSManagedRulesLinuxRuleSet",
+        "VendorName": "AWS"
+       }
+      },
+      "VisibilityConfig": {
+       "CloudWatchMetricsEnabled": true,
+       "MetricName": "AWSManagedRulesLinuxRuleSet",
+       "SampledRequestsEnabled": true
+      }
+     }
+    ],
+    "Scope": "CLOUDFRONT",
+    "VisibilityConfig": {
+     "CloudWatchMetricsEnabled": true,
+     "MetricName": "medmelo-waf-prod",
+     "SampledRequestsEnabled": true
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloCdnStack/MedmeloWafAcl"
+   }
+  },
+  "MediaOACC4276BB0": {
+   "Type": "AWS::CloudFront::OriginAccessControl",
+   "Properties": {
+    "OriginAccessControlConfig": {
+     "Description": "OAC for medmelo-media-prod",
+     "Name": "MedmeloCdnStackMediaOACAD6E574B",
+     "OriginAccessControlOriginType": "s3",
+     "SigningBehavior": "always",
+     "SigningProtocol": "sigv4"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloCdnStack/MediaOAC/Resource"
+   }
+  },
+  "AdminOACB9A16AC7": {
+   "Type": "AWS::CloudFront::OriginAccessControl",
+   "Properties": {
+    "OriginAccessControlConfig": {
+     "Description": "OAC for medmelo-admin-spa",
+     "Name": "MedmeloCdnStackAdminOAC773A5345",
+     "OriginAccessControlOriginType": "s3",
+     "SigningBehavior": "always",
+     "SigningProtocol": "sigv4"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloCdnStack/AdminOAC/Resource"
+   }
+  },
+  "ApiCachePolicyF71AA3E6": {
+   "Type": "AWS::CloudFront::CachePolicy",
+   "Properties": {
+    "CachePolicyConfig": {
+     "DefaultTTL": 0,
+     "MaxTTL": 0,
+     "MinTTL": 0,
+     "Name": "medmelo-api-no-cache",
+     "ParametersInCacheKeyAndForwardedToOrigin": {
+      "CookiesConfig": {
+       "CookieBehavior": "none"
+      },
+      "EnableAcceptEncodingBrotli": false,
+      "EnableAcceptEncodingGzip": false,
+      "HeadersConfig": {
+       "HeaderBehavior": "none"
+      },
+      "QueryStringsConfig": {
+       "QueryStringBehavior": "none"
+      }
+     }
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloCdnStack/ApiCachePolicy/Resource"
+   }
+  },
+  "ApiOriginRequestPolicy7A536D4C": {
+   "Type": "AWS::CloudFront::OriginRequestPolicy",
+   "Properties": {
+    "OriginRequestPolicyConfig": {
+     "CookiesConfig": {
+      "CookieBehavior": "none"
+     },
+     "HeadersConfig": {
+      "HeaderBehavior": "allViewer"
+     },
+     "Name": "medmelo-api-forward",
+     "QueryStringsConfig": {
+      "QueryStringBehavior": "all"
+     }
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloCdnStack/ApiOriginRequestPolicy/Resource"
+   }
+  },
+  "MediaCachePolicy367B1FB9": {
+   "Type": "AWS::CloudFront::CachePolicy",
+   "Properties": {
+    "CachePolicyConfig": {
+     "DefaultTTL": 86400,
+     "MaxTTL": 604800,
+     "MinTTL": 0,
+     "Name": "medmelo-media-24h",
+     "ParametersInCacheKeyAndForwardedToOrigin": {
+      "CookiesConfig": {
+       "CookieBehavior": "none"
+      },
+      "EnableAcceptEncodingBrotli": true,
+      "EnableAcceptEncodingGzip": true,
+      "HeadersConfig": {
+       "HeaderBehavior": "none"
+      },
+      "QueryStringsConfig": {
+       "QueryStringBehavior": "none"
+      }
+     }
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloCdnStack/MediaCachePolicy/Resource"
+   }
+  },
+  "MedmeloDistributionC3DE0AAD": {
+   "Type": "AWS::CloudFront::Distribution",
+   "Properties": {
+    "DistributionConfig": {
+     "CacheBehaviors": [
+      {
+       "AllowedMethods": [
+        "GET",
+        "HEAD",
+        "OPTIONS",
+        "PUT",
+        "PATCH",
+        "POST",
+        "DELETE"
+       ],
+       "CachePolicyId": {
+        "Ref": "ApiCachePolicyF71AA3E6"
+       },
+       "Compress": true,
+       "OriginRequestPolicyId": {
+        "Ref": "ApiOriginRequestPolicy7A536D4C"
+       },
+       "PathPattern": "/api/*",
+       "TargetOriginId": "MedmeloCdnStackMedmeloDistributionOrigin2059F54F0",
+       "ViewerProtocolPolicy": "redirect-to-https"
+      },
+      {
+       "CachePolicyId": {
+        "Ref": "MediaCachePolicy367B1FB9"
+       },
+       "Compress": true,
+       "PathPattern": "/media/*",
+       "TargetOriginId": "MedmeloCdnStackMedmeloDistributionOrigin31F862977",
+       "ViewerProtocolPolicy": "redirect-to-https"
+      },
+      {
+       "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+       "Compress": true,
+       "PathPattern": "/admin/*",
+       "TargetOriginId": "MedmeloCdnStackMedmeloDistributionOrigin48B9D74F3",
+       "ViewerProtocolPolicy": "redirect-to-https"
+      }
+     ],
+     "Comment": "Medmelo production CDN",
+     "CustomErrorResponses": [
+      {
+       "ErrorCachingMinTTL": 0,
+       "ErrorCode": 403,
+       "ResponseCode": 200,
+       "ResponsePagePath": "/index.html"
+      },
+      {
+       "ErrorCachingMinTTL": 0,
+       "ErrorCode": 404,
+       "ResponseCode": 200,
+       "ResponsePagePath": "/index.html"
+      }
+     ],
+     "DefaultCacheBehavior": {
+      "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+      "Compress": true,
+      "TargetOriginId": "MedmeloCdnStackMedmeloDistributionOrigin191FD3A93",
+      "ViewerProtocolPolicy": "redirect-to-https"
+     },
+     "Enabled": true,
+     "HttpVersion": "http2and3",
+     "IPV6Enabled": true,
+     "Origins": [
+      {
+       "DomainName": "medmelo-admin-spa.s3.us-east-1.amazonaws.com",
+       "Id": "MedmeloCdnStackMedmeloDistributionOrigin191FD3A93",
+       "OriginAccessControlId": {
+        "Fn::GetAtt": [
+         "AdminOACB9A16AC7",
+         "Id"
+        ]
+       },
+       "S3OriginConfig": {
+        "OriginAccessIdentity": ""
+       }
+      },
+      {
+       "CustomOriginConfig": {
+        "HTTPSPort": 443,
+        "OriginProtocolPolicy": "https-only",
+        "OriginSSLProtocols": [
+         "TLSv1.2"
+        ]
+       },
+       "DomainName": "3x5r5y26yd.execute-api.ap-south-1.amazonaws.com",
+       "Id": "MedmeloCdnStackMedmeloDistributionOrigin2059F54F0"
+      },
+      {
+       "DomainName": "medmelo-media-prod.s3.us-east-1.amazonaws.com",
+       "Id": "MedmeloCdnStackMedmeloDistributionOrigin31F862977",
+       "OriginAccessControlId": {
+        "Fn::GetAtt": [
+         "MediaOACC4276BB0",
+         "Id"
+        ]
+       },
+       "S3OriginConfig": {
+        "OriginAccessIdentity": ""
+       }
+      },
+      {
+       "DomainName": "medmelo-admin-spa.s3.us-east-1.amazonaws.com",
+       "Id": "MedmeloCdnStackMedmeloDistributionOrigin48B9D74F3",
+       "OriginAccessControlId": {
+        "Fn::GetAtt": [
+         "AdminOACB9A16AC7",
+         "Id"
+        ]
+       },
+       "S3OriginConfig": {
+        "OriginAccessIdentity": ""
+       }
+      }
+     ],
+     "PriceClass": "PriceClass_200",
+     "WebACLId": {
+      "Fn::GetAtt": [
+       "MedmeloWafAcl",
+       "Arn"
+      ]
+     }
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloCdnStack/MedmeloDistribution/Resource"
+   }
+  },
+  "MediaBucketPolicy": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": "medmelo-media-prod",
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "cloudfront.amazonaws.com"
+       },
+       "Action": "s3:GetObject",
+       "Resource": "arn:aws:s3:::medmelo-media-prod/*",
+       "Condition": {
+        "StringEquals": {
+         "AWS:SourceArn": {
+          "Fn::Join": [
+           "",
+           [
+            "arn:aws:cloudfront::101374115637:distribution/",
+            {
+             "Ref": "MedmeloDistributionC3DE0AAD"
+            }
+           ]
+          ]
+         }
+        }
+       }
+      }
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloCdnStack/MediaBucketPolicy"
+   }
+  },
+  "AdminSpaBucketPolicy": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": "medmelo-admin-spa",
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "cloudfront.amazonaws.com"
+       },
+       "Action": "s3:GetObject",
+       "Resource": "arn:aws:s3:::medmelo-admin-spa/*",
+       "Condition": {
+        "StringEquals": {
+         "AWS:SourceArn": {
+          "Fn::Join": [
+           "",
+           [
+            "arn:aws:cloudfront::101374115637:distribution/",
+            {
+             "Ref": "MedmeloDistributionC3DE0AAD"
+            }
+           ]
+          ]
+         }
+        }
+       }
+      }
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloCdnStack/AdminSpaBucketPolicy"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/22MQY6CQBBFz+K+KRG4gDJLEw0sXJqmKGZKsHumqxpiCHefMC7Ghauf9/LyM8iKAtKNnSTBtk8GbmCu1WJv7CTXWXI4ROxJD1bITLYbMyg7d6FmXx4NDj62XfBOYa7zU+BPdntEEim90+AHU3burbb4RWc/MD7W5BWfeUU/kUT/k3f6g0UDN1HZu7V55WVZTUXiY0D6e4j6HXUxzrcEN9mOWQ67FNLNTZiTEJ3ynaB67i8GbYTwGAEAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloCdnStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "CloudFrontDomain": {
+   "Description": "CloudFront domain - point your DNS CNAME here",
+   "Value": {
+    "Fn::GetAtt": [
+     "MedmeloDistributionC3DE0AAD",
+     "DomainName"
+    ]
+   }
+  },
+  "CloudFrontDistributionId": {
+   "Description": "Use for CloudFront cache invalidations in CI/CD",
+   "Value": {
+    "Ref": "MedmeloDistributionC3DE0AAD"
+   }
+  },
+  "WafAclArn": {
+   "Description": "WAF ACL ARN",
+   "Value": {
+    "Fn::GetAtt": [
+     "MedmeloWafAcl",
+     "Arn"
+    ]
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

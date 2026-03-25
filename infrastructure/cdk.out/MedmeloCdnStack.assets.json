@@ -1,0 +1,21 @@
+{
+  "version": "52.0.0",
+  "files": {
+    "91edd18bd3f0362fbb750842ca65045c9a09d870bcdf1967842b50f1a010b373": {
+      "displayName": "MedmeloCdnStack Template",
+      "source": {
+        "path": "MedmeloCdnStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "101374115637-us-east-1-819ae270": {
+          "bucketName": "cdk-hnb659fds-assets-101374115637-us-east-1",
+          "objectKey": "91edd18bd3f0362fbb750842ca65045c9a09d870bcdf1967842b50f1a010b373.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::101374115637:role/cdk-hnb659fds-file-publishing-role-101374115637-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

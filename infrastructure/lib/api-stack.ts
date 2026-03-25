@@ -85,7 +85,7 @@ export class MedmeloApiStack extends cdk.Stack {
       functionName: 'medmelo-core-prod',
       memorySize: 512,
       timeout: cdk.Duration.seconds(10),
-      entry: '../functions/core/index.ts',
+      entry: 'functions/core/index.ts',   // FIX: was '../functions/core/index.ts'
       handler: 'handler',
     });
 
@@ -94,7 +94,7 @@ export class MedmeloApiStack extends cdk.Stack {
       functionName: 'medmelo-exam-prod',
       memorySize: 1024,
       timeout: cdk.Duration.seconds(30),
-      entry: '../functions/exam/index.ts',
+      entry: 'functions/exam/index.ts',   // FIX: was '../functions/exam/index.ts'
       handler: 'handler',
     });
 
@@ -103,7 +103,7 @@ export class MedmeloApiStack extends cdk.Stack {
       functionName: 'medmelo-admin-prod',
       memorySize: 256,
       timeout: cdk.Duration.seconds(30),
-      entry: '../functions/admin/index.ts',
+      entry: 'functions/admin/index.ts',  // FIX: was '../functions/admin/index.ts'
       handler: 'handler',
     });
 
@@ -112,7 +112,7 @@ export class MedmeloApiStack extends cdk.Stack {
       functionName: 'medmelo-media-prod',
       memorySize: 128,
       timeout: cdk.Duration.seconds(5),
-      entry: '../functions/media/index.ts',
+      entry: 'functions/media/index.ts',  // FIX: was '../functions/media/index.ts'
       handler: 'handler',
     });
 

@@ -254,7 +254,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/1WMyw6CMBBFvwXWZURk5U74ASJLY0wtIxmgbcIMPkL4d6OYgKv7yj0JJGkKcaAfHJmqjTq6wliKNq3SD77wDsZsMC2Kym/u52YpfEfmtdRzPo2hpSe5cB+ukT/Wd2JYH0rRghadcDidJ5UPLN4ekf3QG/zQF/83Fb2/U4V9phnVgRmlFF2TqyflfIXQ8OaepLBNIA4aJor6wQlZhOOsb4j8CB75AAAA"
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/1WMTQ6CMBCFzwLrMiKwcqdewMDSGFPLSEZsmzADaAh3NwoJuHp/eV8CSZZBHOieI1PW0ZNuMBSiTa10z1dOYTi0pkZRx7ub3SQn/yTzXuopn4fQ0otcuAvXyJn1mxjWh0K0oEUnHI6XUR1bFm9zZN82Br/0xf9Np8Z3VGJz0Ixqz4xSiK7IVaNyvkR48KZLUtjGEAcPJoqa1glZhHzSDwF25hX5AAAA"
    },
    "Metadata": {
     "aws:cdk:path": "MedmeloStorageStack/CDKMetadata/Default"

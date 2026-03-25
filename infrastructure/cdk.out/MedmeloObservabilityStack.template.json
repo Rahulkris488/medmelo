@@ -1,0 +1,387 @@
+{
+ "Resources": {
+  "MedmeloAlerts0C4E1D15": {
+   "Type": "AWS::SNS::Topic",
+   "Properties": {
+    "TopicName": "medmelo-alerts-prod"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloObservabilityStack/MedmeloAlerts/Resource"
+   }
+  },
+  "MedmeloAlertsmedmelodevappgmailcom48B87F46": {
+   "Type": "AWS::SNS::Subscription",
+   "Properties": {
+    "Endpoint": "medmelodev.app@gmail.com",
+    "Protocol": "email",
+    "TopicArn": {
+     "Ref": "MedmeloAlerts0C4E1D15"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloObservabilityStack/MedmeloAlerts/medmelodev.app@gmail.com/Resource"
+   }
+  },
+  "CoreLogGroupECDC63E5": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/aws/lambda/medmelo-core-prod",
+    "RetentionInDays": 30
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "MedmeloObservabilityStack/CoreLogGroup/Resource"
+   }
+  },
+  "ExamLogGroup379F4F42": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/aws/lambda/medmelo-exam-prod",
+    "RetentionInDays": 90
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "MedmeloObservabilityStack/ExamLogGroup/Resource"
+   }
+  },
+  "AdminLogGroup7F6086AD": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/aws/lambda/medmelo-admin-prod",
+    "RetentionInDays": 90
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "MedmeloObservabilityStack/AdminLogGroup/Resource"
+   }
+  },
+  "MediaLogGroupAD312AC2": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/aws/lambda/medmelo-media-prod",
+    "RetentionInDays": 30
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "MedmeloObservabilityStack/MediaLogGroup/Resource"
+   }
+  },
+  "LambdaCoreErrorRateA95444E5": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Ref": "MedmeloAlerts0C4E1D15"
+     }
+    ],
+    "AlarmDescription": "Lambda-Core error rate exceeded 2%",
+    "AlarmName": "LambdaCoreErrorRate",
+    "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+    "Dimensions": [
+     {
+      "Name": "FunctionName",
+      "Value": {
+       "Fn::Select": [
+        6,
+        {
+         "Fn::Split": [
+          ":",
+          {
+           "Fn::Join": [
+            "",
+            [
+             "arn:",
+             {
+              "Ref": "AWS::Partition"
+             },
+             ":lambda:ap-south-1:101374115637:function:medmelo-core-prod"
+            ]
+           ]
+          }
+         ]
+        }
+       ]
+      }
+     }
+    ],
+    "EvaluationPeriods": 1,
+    "MetricName": "Errors",
+    "Namespace": "AWS/Lambda",
+    "Period": 300,
+    "Statistic": "Sum",
+    "Threshold": 2,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloObservabilityStack/LambdaCoreErrorRate/Resource"
+   }
+  },
+  "LambdaExamErrorRate15678F1D": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Ref": "MedmeloAlerts0C4E1D15"
+     }
+    ],
+    "AlarmDescription": "URGENT: Lambda-Exam error rate exceeded 0.5% — student grading affected",
+    "AlarmName": "LambdaExamErrorRate",
+    "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+    "Dimensions": [
+     {
+      "Name": "FunctionName",
+      "Value": {
+       "Fn::Select": [
+        6,
+        {
+         "Fn::Split": [
+          ":",
+          {
+           "Fn::Join": [
+            "",
+            [
+             "arn:",
+             {
+              "Ref": "AWS::Partition"
+             },
+             ":lambda:ap-south-1:101374115637:function:medmelo-exam-prod"
+            ]
+           ]
+          }
+         ]
+        }
+       ]
+      }
+     }
+    ],
+    "EvaluationPeriods": 1,
+    "MetricName": "Errors",
+    "Namespace": "AWS/Lambda",
+    "Period": 60,
+    "Statistic": "Sum",
+    "Threshold": 1,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloObservabilityStack/LambdaExamErrorRate/Resource"
+   }
+  },
+  "APIGateway5xxRateECC0EC8F": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Ref": "MedmeloAlerts0C4E1D15"
+     }
+    ],
+    "AlarmDescription": "API Gateway 5XX error rate exceeded 1%",
+    "AlarmName": "APIGateway5xxRate",
+    "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+    "Dimensions": [
+     {
+      "Name": "ApiId",
+      "Value": "3x5r5y26yd"
+     }
+    ],
+    "EvaluationPeriods": 1,
+    "MetricName": "5XXError",
+    "Namespace": "AWS/ApiGateway",
+    "Period": 300,
+    "Statistic": "Sum",
+    "Threshold": 10,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloObservabilityStack/APIGateway5xxRate/Resource"
+   }
+  },
+  "AuroraACUHighD5299F60": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Ref": "MedmeloAlerts0C4E1D15"
+     }
+    ],
+    "AlarmDescription": "Aurora scaling high — check for slow queries or unexpected load",
+    "AlarmName": "AuroraACUHigh",
+    "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+    "Dimensions": [
+     {
+      "Name": "DBClusterIdentifier",
+      "Value": "medmelo-aurora-prod"
+     }
+    ],
+    "EvaluationPeriods": 1,
+    "MetricName": "ServerlessDatabaseCapacity",
+    "Namespace": "AWS/RDS",
+    "Period": 300,
+    "Statistic": "Maximum",
+    "Threshold": 14,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloObservabilityStack/AuroraACUHigh/Resource"
+   }
+  },
+  "RedisCacheMissHigh279DB4A6": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Ref": "MedmeloAlerts0C4E1D15"
+     }
+    ],
+    "AlarmDescription": "Redis cache miss rate high — investigate cold cache or TTL issues",
+    "AlarmName": "RedisCacheMissHigh",
+    "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+    "EvaluationPeriods": 1,
+    "MetricName": "CacheMisses",
+    "Namespace": "AWS/ElastiCache",
+    "Period": 600,
+    "Statistic": "Sum",
+    "Threshold": 100,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloObservabilityStack/RedisCacheMissHigh/Resource"
+   }
+  },
+  "DynamoDBThrottles4F7F20A3": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Ref": "MedmeloAlerts0C4E1D15"
+     }
+    ],
+    "AlarmDescription": "DynamoDB throttling detected — check on-demand capacity",
+    "AlarmName": "DynamoDBThrottles",
+    "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+    "EvaluationPeriods": 1,
+    "MetricName": "ThrottledRequests",
+    "Namespace": "AWS/DynamoDB",
+    "Period": 300,
+    "Statistic": "Sum",
+    "Threshold": 1,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloObservabilityStack/DynamoDBThrottles/Resource"
+   }
+  },
+  "MonthlyBilling5kDC8ECDA6": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Ref": "MedmeloAlerts0C4E1D15"
+     }
+    ],
+    "AlarmDescription": "Monthly AWS spend exceeded ₹5,000 — review Cost Explorer",
+    "AlarmName": "MonthlyBillingAlert5k",
+    "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+    "Dimensions": [
+     {
+      "Name": "Currency",
+      "Value": "USD"
+     }
+    ],
+    "EvaluationPeriods": 1,
+    "MetricName": "EstimatedCharges",
+    "Namespace": "AWS/Billing",
+    "Period": 21600,
+    "Statistic": "Maximum",
+    "Threshold": 60,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloObservabilityStack/MonthlyBilling5k/Resource"
+   }
+  },
+  "MonthlyBilling15k41A74444": {
+   "Type": "AWS::CloudWatch::Alarm",
+   "Properties": {
+    "AlarmActions": [
+     {
+      "Ref": "MedmeloAlerts0C4E1D15"
+     }
+    ],
+    "AlarmDescription": "Monthly AWS spend exceeded ₹15,000 — urgent cost review",
+    "AlarmName": "MonthlyBillingAlert15k",
+    "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+    "Dimensions": [
+     {
+      "Name": "Currency",
+      "Value": "USD"
+     }
+    ],
+    "EvaluationPeriods": 1,
+    "MetricName": "EstimatedCharges",
+    "Namespace": "AWS/Billing",
+    "Period": 21600,
+    "Statistic": "Maximum",
+    "Threshold": 180,
+    "TreatMissingData": "notBreaching"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloObservabilityStack/MonthlyBilling15k/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/02LTQ7CIBCFz9I9HWvtBdRENyYm1r2ZQq20FAgDdkG4u8HGxNX73l8NddNAVeBCJRdTqWQHsfXIJ4YLPSJpgng3VnJ2fOoV2tARd9J6aXRO/31iygwE8WKGszPB5v7HiSmcO4FwCprn8QGpZ1yZIBb0/AVxr9DN+fKFlDJeg7fBJ6aN6GGkzbvewbaCqhhJytIF7eXcw23VDx5JmEHPAAAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloObservabilityStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "AlertTopicArn": {
+   "Description": "SNS topic ARN for all Medmelo alerts",
+   "Value": {
+    "Ref": "MedmeloAlerts0C4E1D15"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

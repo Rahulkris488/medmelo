@@ -5,10 +5,22 @@
       "data": "RedisSubnetGroup"
     }
   ],
-  "/MedmeloDataStack/MedmeloRedis": [
+  "/MedmeloDataStack/MedmeloRedisProd": [
     {
       "type": "aws:cdk:logicalId",
-      "data": "MedmeloRedis"
+      "data": "MedmeloRedisProd"
+    }
+  ],
+  "/MedmeloDataStack/AuroraClusterEndpoint": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AuroraClusterEndpoint"
+    }
+  ],
+  "/MedmeloDataStack/AuroraClusterIdentifier": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AuroraClusterIdentifier"
     }
   ],
   "/MedmeloDataStack/BootstrapVersion": [
@@ -21,6 +33,18 @@
     {
       "type": "aws:cdk:logicalId",
       "data": "CheckBootstrapVersion"
+    }
+  ],
+  "/MedmeloDataStack/AuroraSubnetGroup/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AuroraSubnetGroup"
+    }
+  ],
+  "/MedmeloDataStack/AuroraCluster/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AuroraCluster23D869C0"
     }
   ],
   "/MedmeloDataStack/ExamResultsDLQ/Resource": [
@@ -51,6 +75,24 @@
     {
       "type": "aws:cdk:logicalId",
       "data": "CDKMetadata"
+    }
+  ],
+  "/MedmeloDataStack/AuroraCluster/Secret/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AuroraClusterSecret8E4F2BC8"
+    }
+  ],
+  "/MedmeloDataStack/AuroraCluster/writer/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AuroraClusterwriter499C523E"
+    }
+  ],
+  "/MedmeloDataStack/AuroraCluster/Secret/Attachment/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AuroraClusterSecretAttachmentDB8032DA"
     }
   ]
 }
