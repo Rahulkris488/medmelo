@@ -1,0 +1,21 @@
+{
+  "version": "52.0.0",
+  "files": {
+    "865ddacb410136e29d73c15a5ca214c4ed2dc4d7ba3283867af5cc9d1b1c82be": {
+      "displayName": "MedmeloAuthStack Template",
+      "source": {
+        "path": "MedmeloAuthStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "101374115637-ap-south-1-a90aba91": {
+          "bucketName": "cdk-hnb659fds-assets-101374115637-ap-south-1",
+          "objectKey": "865ddacb410136e29d73c15a5ca214c4ed2dc4d7ba3283867af5cc9d1b1c82be.json",
+          "region": "ap-south-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::101374115637:role/cdk-hnb659fds-file-publishing-role-101374115637-ap-south-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

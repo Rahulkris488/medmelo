@@ -12,255 +12,214 @@ import * as lambdaEventSources from 'aws-cdk-lib/aws-lambda-event-sources';
 import { HttpLambdaIntegration } from 'aws-cdk-lib/aws-apigatewayv2-integrations';
 import { Construct } from 'constructs';
 
+interface MedmeloApiStackProps extends cdk.StackProps {
+  vpc: ec2.IVpc;
+  lambdaSecurityGroup: ec2.ISecurityGroup;
+  cognitoUserPoolId: string;
+  cognitoClientId: string;
+}
+
 export class MedmeloApiStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  public readonly apiId: string; // ✅ exported for CDN stack
+
+  constructor(scope: Construct, id: string, props: MedmeloApiStackProps) {
     super(scope, id, props);
 
+    const { vpc, lambdaSecurityGroup, cognitoUserPoolId, cognitoClientId } = props;
+
     // ─────────────────────────────────────────────────────────────
-    // 1. NETWORKING REFERENCE
+    // SQS
     // ─────────────────────────────────────────────────────────────
-    const vpc = ec2.Vpc.fromLookup(this, 'MedmeloVPC', {
-      vpcName: 'medmelo-vpc',
+    const dlq = new sqs.Queue(this, 'ExamDLQ', {
+      queueName: `medmelo-exam-dlq-prod`,
     });
 
-    const lambdaSG = ec2.SecurityGroup.fromSecurityGroupId(
-      this,
-      'LambdaSG',
-      'sg-093bbec0230c606db'
-    );
-
-    // ─────────────────────────────────────────────────────────────
-    // 2. SQS INFRASTRUCTURE
-    // ─────────────────────────────────────────────────────────────
-    const examResultsDlq = new sqs.Queue(this, 'ExamResultsDLQ', {
-      queueName: 'medmelo-exam-results-dlq-prod',
-    });
-
-    const examResultsQueue = new sqs.Queue(this, 'ExamResultsQueue', {
-      queueName: 'medmelo-exam-results-prod',
+    const examQueue = new sqs.Queue(this, 'ExamQueue', {
+      queueName: `medmelo-exam-prod`,
       visibilityTimeout: cdk.Duration.seconds(30),
       deadLetterQueue: {
-        queue: examResultsDlq,
+        queue: dlq,
         maxReceiveCount: 3,
       },
     });
 
-    const lambdaAsyncDlq = new sqs.Queue(this, 'LambdaAsyncDLQ');
+    const asyncDlq = new sqs.Queue(this, 'LambdaDLQ');
 
     // ─────────────────────────────────────────────────────────────
-    // 3. SHARED LAMBDA CONFIGURATION
-    // NodejsFunction auto-compiles TypeScript via esbuild —
-    // no manual tsc / webpack step needed.
+    // COMMON LAMBDA CONFIG
     // ─────────────────────────────────────────────────────────────
-    const sharedProps: Partial<lambdaNodejs.NodejsFunctionProps> = {
+    const common: Partial<lambdaNodejs.NodejsFunctionProps> = {
       runtime: lambda.Runtime.NODEJS_20_X,
       architecture: lambda.Architecture.ARM_64,
       vpc,
+      securityGroups: [lambdaSecurityGroup],
       vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS },
-      securityGroups: [lambdaSG],
       tracing: lambda.Tracing.ACTIVE,
-      logRetention: logs.RetentionDays.THREE_MONTHS,
-      onFailure: new destinations.SqsDestination(lambdaAsyncDlq),
+      onFailure: new destinations.SqsDestination(asyncDlq),
       bundling: {
         minify: true,
-        sourceMap: false,
-        target: 'node20',
-        // Exclude aws-sdk — already available in the Lambda runtime
         externalModules: ['@aws-sdk/*'],
       },
       environment: {
         NODE_ENV: 'production',
-        EXAM_QUEUE_URL: examResultsQueue.queueUrl,
+        EXAM_QUEUE_URL: examQueue.queueUrl,
       },
     };
 
     // ─────────────────────────────────────────────────────────────
-    // 4. LAMBDA FUNCTIONS
-    // `entry` points to your .ts source file.
-    // `handler` is the exported function name inside that file.
-    // CDK + esbuild compiles + zips it automatically on cdk deploy.
+    // LAMBDA LOG GROUPS
     // ─────────────────────────────────────────────────────────────
-    const coreFn = new lambdaNodejs.NodejsFunction(this, 'LambdaCore', {
-      ...sharedProps,
-      functionName: 'medmelo-core-prod',
-      memorySize: 512,
-      timeout: cdk.Duration.seconds(10),
-      entry: 'functions/core/index.ts',   // FIX: was '../functions/core/index.ts'
-      handler: 'handler',
+    const coreLogGroup = new logs.LogGroup(this, 'CoreLogGroupLambda', {
+      retention: logs.RetentionDays.THREE_MONTHS,
     });
 
-    const examFn = new lambdaNodejs.NodejsFunction(this, 'LambdaExam', {
-      ...sharedProps,
-      functionName: 'medmelo-exam-prod',
-      memorySize: 1024,
-      timeout: cdk.Duration.seconds(30),
-      entry: 'functions/exam/index.ts',   // FIX: was '../functions/exam/index.ts'
-      handler: 'handler',
+    const examLogGroup = new logs.LogGroup(this, 'ExamLogGroupLambda', {
+      retention: logs.RetentionDays.THREE_MONTHS,
     });
 
-    const adminFn = new lambdaNodejs.NodejsFunction(this, 'LambdaAdmin', {
-      ...sharedProps,
-      functionName: 'medmelo-admin-prod',
-      memorySize: 256,
-      timeout: cdk.Duration.seconds(30),
-      entry: 'functions/admin/index.ts',  // FIX: was '../functions/admin/index.ts'
-      handler: 'handler',
+    const adminLogGroup = new logs.LogGroup(this, 'AdminLogGroupLambda', {
+      retention: logs.RetentionDays.THREE_MONTHS,
     });
 
-    const mediaFn = new lambdaNodejs.NodejsFunction(this, 'LambdaMedia', {
-      ...sharedProps,
-      functionName: 'medmelo-media-prod',
-      memorySize: 128,
-      timeout: cdk.Duration.seconds(5),
-      entry: 'functions/media/index.ts',  // FIX: was '../functions/media/index.ts'
-      handler: 'handler',
-    });
-
-    // ─────────────────────────────────────────────────────────────
-    // 5. IAM PERMISSIONS
-    // ─────────────────────────────────────────────────────────────
-
-    // Allow examFn to enqueue exam results
-    examResultsQueue.grantSendMessages(examFn);
-
-    // Grant all lambdas read access to their Secrets Manager secrets
-    const secretsToGrant = [
-      'aurora/credentials',
-      'redis/auth',
-      'cognito/config',
-      'google/oauth',
-      'ses/config',
-    ];
-
-    [coreFn, examFn, adminFn, mediaFn].forEach((fn) => {
-      secretsToGrant.forEach((path) => {
-        fn.addToRolePolicy(
-          new iam.PolicyStatement({
-            actions: ['secretsmanager:GetSecretValue'],
-            resources: [
-              `arn:aws:secretsmanager:${this.region}:${this.account}:secret:medmelo/${path}-*`,
-            ],
-          })
-        );
-      });
-    });
-
-    // Allow examFn to send emails via SES
-    examFn.addToRolePolicy(
-      new iam.PolicyStatement({
-        actions: ['ses:SendEmail', 'ses:SendTemplatedEmail'],
-        resources: [
-          `arn:aws:ses:${this.region}:${this.account}:identity/medmelo.com`,
-        ],
-      })
-    );
-
-    // ─────────────────────────────────────────────────────────────
-    // 6. SQS → LAMBDA EVENT SOURCE
-    // coreFn consumes exam results off the queue in batches of 5
-    // ─────────────────────────────────────────────────────────────
-    coreFn.addEventSource(
-      new lambdaEventSources.SqsEventSource(examResultsQueue, {
-        batchSize: 5,
-      })
-    );
-
-    // ─────────────────────────────────────────────────────────────
-    // 7. API GATEWAY
-    // ─────────────────────────────────────────────────────────────
-    const accessLogGroup = new logs.LogGroup(this, 'ApiAccessLogs', {
+    const mediaLogGroup = new logs.LogGroup(this, 'MediaLogGroupLambda', {
       retention: logs.RetentionDays.ONE_MONTH,
     });
 
-    // API Gateway must be allowed to write to the log group
-    accessLogGroup.grantWrite(
-      new iam.ServicePrincipal('apigateway.amazonaws.com')
-    );
+    // ─────────────────────────────────────────────────────────────
+    // LAMBDAS
+    // ─────────────────────────────────────────────────────────────
+    const coreFn = new lambdaNodejs.NodejsFunction(this, 'CoreFn', {
+      ...common,
+      functionName: `medmelo-core-prod`,
+      entry: 'functions/core/index.ts',
+      handler: 'handler',
+      memorySize: 512,
+      timeout: cdk.Duration.seconds(10),
+      logGroup: coreLogGroup,
+    });
 
-    const httpApi = new apigwv2.HttpApi(this, 'MedmeloHttpApi', {
-      apiName: 'medmelo-api-prod',
+    const examFn = new lambdaNodejs.NodejsFunction(this, 'ExamFn', {
+      ...common,
+      functionName: `medmelo-exam-prod`,
+      entry: 'functions/exam/index.ts',
+      handler: 'handler',
+      memorySize: 1024,
+      timeout: cdk.Duration.seconds(30),
+      reservedConcurrentExecutions: 50, // ✅ CRITICAL
+      logGroup: examLogGroup,
+    });
+
+    const adminFn = new lambdaNodejs.NodejsFunction(this, 'AdminFn', {
+      ...common,
+      functionName: `medmelo-admin-prod`,
+      entry: 'functions/admin/index.ts',
+      handler: 'handler',
+      memorySize: 256,
+      timeout: cdk.Duration.seconds(30),
+      logGroup: adminLogGroup,
+    });
+
+    const mediaFn = new lambdaNodejs.NodejsFunction(this, 'MediaFn', {
+      ...common,
+      functionName: `medmelo-media-prod`,
+      entry: 'functions/media/index.ts',
+      handler: 'handler',
+      memorySize: 128,
+      timeout: cdk.Duration.seconds(5),
+      logGroup: mediaLogGroup,
+    });
+
+    // ─────────────────────────────────────────────────────────────
+    // PERMISSIONS
+    // ─────────────────────────────────────────────────────────────
+    examQueue.grantSendMessages(examFn);
+
+    [coreFn, examFn, adminFn, mediaFn].forEach(fn => {
+      fn.addToRolePolicy(new iam.PolicyStatement({
+        actions: ['secretsmanager:GetSecretValue'],
+        resources: [`arn:aws:secretsmanager:${this.region}:${this.account}:secret:medmelo/*`],
+      }));
+    });
+
+    examFn.addToRolePolicy(new iam.PolicyStatement({
+      actions: ['ses:SendEmail', 'ses:SendTemplatedEmail'],
+      resources: [`arn:aws:ses:${this.region}:${this.account}:identity/medmelo.com`],
+    }));
+
+    coreFn.addEventSource(new lambdaEventSources.SqsEventSource(examQueue, {
+      batchSize: 5,
+    }));
+
+    // ─────────────────────────────────────────────────────────────
+    // API GATEWAY
+    // ─────────────────────────────────────────────────────────────
+    const logGroup = new logs.LogGroup(this, 'ApiLogs', {
+      retention: logs.RetentionDays.ONE_MONTH,
+    });
+
+    const api = new apigwv2.HttpApi(this, 'Api', {
+      apiName: 'medmelo-api',
       createDefaultStage: false,
     });
 
-    // JWT Authorizer backed by Cognito User Pool
+    // ✅ Export API ID for cross-stack use (CDN)
+    this.apiId = api.apiId;
+
     const authorizer = new authorizers.HttpJwtAuthorizer(
-      'CognitoAuth',
-      `https://cognito-idp.ap-south-1.amazonaws.com/ap-south-1_xo19c3jCI`,
+      'Auth',
+      `https://cognito-idp.${this.region}.amazonaws.com/${cognitoUserPoolId}`,
       {
-        jwtAudience: ['3r1fht3ht9g1cdv3n0f7g8rc1r'],
+        jwtAudience: [cognitoClientId],
       }
     );
 
-    // Add the prod stage (throttle only — logging configured via CfnStage below)
-    const prodStage = httpApi.addStage('prod', {
-      stageName: 'prod',
+    const stage = api.addStage('prod', {
       autoDeploy: true,
-      throttle: {
-        burstLimit: 10000,
-        rateLimit: 5000,
-      },
+      throttle: { burstLimit: 10000, rateLimit: 5000 },
     });
 
-    // FIX: HttpStageOptions doesn't expose accessLogSettings directly.
-    // Drop to L1 CfnStage — AWS requires BOTH destinationArn + format together.
-    const cfnStage = prodStage.node.defaultChild as apigwv2.CfnStage;
+    const cfnStage = stage.node.defaultChild as apigwv2.CfnStage;
     cfnStage.accessLogSettings = {
-      destinationArn: accessLogGroup.logGroupArn,
+      destinationArn: logGroup.logGroupArn,
       format: JSON.stringify({
-        requestId:        '$context.requestId',
-        ip:               '$context.identity.sourceIp',
-        requestTime:      '$context.requestTime',
-        httpMethod:       '$context.httpMethod',
-        routeKey:         '$context.routeKey',
-        status:           '$context.status',
-        protocol:         '$context.protocol',
-        responseLength:   '$context.responseLength',
-        integrationError: '$context.integrationErrorMessage',
+        requestId: '$context.requestId',
+        status: '$context.status',
+        routeKey: '$context.routeKey',
       }),
     };
 
     // ─────────────────────────────────────────────────────────────
-    // 8. ROUTES
+    // ROUTES
     // ─────────────────────────────────────────────────────────────
-    httpApi.addRoutes({
-      path: '/api/v1/exam/{proxy+}',
-      methods: [apigwv2.HttpMethod.ANY],
-      integration: new HttpLambdaIntegration('ExamInteg', examFn),
-      authorizer,
-    });
+    const routes = [
+      { path: '/api/v1/core/{proxy+}', fn: coreFn },
+      { path: '/api/v1/exam/{proxy+}', fn: examFn },
+      { path: '/api/v1/admin/{proxy+}', fn: adminFn },
+      { path: '/api/v1/media/{proxy+}', fn: mediaFn },
+    ];
 
-    httpApi.addRoutes({
-      path: '/api/v1/core/{proxy+}',
-      methods: [apigwv2.HttpMethod.ANY],
-      integration: new HttpLambdaIntegration('CoreInteg', coreFn),
-      authorizer,
-    });
-
-    httpApi.addRoutes({
-      path: '/api/v1/admin/{proxy+}',
-      methods: [apigwv2.HttpMethod.ANY],
-      integration: new HttpLambdaIntegration('AdminInteg', adminFn),
-      authorizer,
-    });
-
-    httpApi.addRoutes({
-      path: '/api/v1/media/{proxy+}',
-      methods: [apigwv2.HttpMethod.ANY],
-      integration: new HttpLambdaIntegration('MediaInteg', mediaFn),
-      authorizer,
+    routes.forEach(r => {
+      api.addRoutes({
+        path: r.path,
+        methods: [apigwv2.HttpMethod.ANY],
+        integration: new HttpLambdaIntegration(`${r.path}-int`, r.fn),
+        authorizer,
+      });
     });
 
     // ─────────────────────────────────────────────────────────────
-    // 9. STACK OUTPUTS
+    // OUTPUTS
     // ─────────────────────────────────────────────────────────────
-    new cdk.CfnOutput(this, 'ApiUrl', {
-      value: `${httpApi.url}prod`,
-      description: 'Medmelo HTTP API URL',
+new cdk.CfnOutput(this, 'ApiUrl', {
+  value: `https://${api.apiId}.execute-api.${this.region}.amazonaws.com/prod`,
+});
+
+    new cdk.CfnOutput(this, 'ApiId', {
+      value: api.apiId,
     });
 
     new cdk.CfnOutput(this, 'ExamQueueUrl', {
-      value: examResultsQueue.queueUrl,
-      description: 'Exam Results SQS Queue URL',
+      value: examQueue.queueUrl,
     });
   }
 }

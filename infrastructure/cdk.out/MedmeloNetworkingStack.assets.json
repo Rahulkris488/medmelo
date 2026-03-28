@@ -1,0 +1,21 @@
+{
+  "version": "52.0.0",
+  "files": {
+    "76c6ba39682713b2a53d759cfa55373db394a8773bc54ea80e4bfaa94be2d3af": {
+      "displayName": "MedmeloNetworkingStack Template",
+      "source": {
+        "path": "MedmeloNetworkingStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "101374115637-ap-south-1-f526cc4a": {
+          "bucketName": "cdk-hnb659fds-assets-101374115637-ap-south-1",
+          "objectKey": "76c6ba39682713b2a53d759cfa55373db394a8773bc54ea80e4bfaa94be2d3af.json",
+          "region": "ap-south-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::101374115637:role/cdk-hnb659fds-file-publishing-role-101374115637-ap-south-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

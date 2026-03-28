@@ -23,30 +23,6 @@
       "data": "MedmeloAlerts0C4E1D15"
     }
   ],
-  "/MedmeloObservabilityStack/CoreLogGroup/Resource": [
-    {
-      "type": "aws:cdk:logicalId",
-      "data": "CoreLogGroupECDC63E5"
-    }
-  ],
-  "/MedmeloObservabilityStack/ExamLogGroup/Resource": [
-    {
-      "type": "aws:cdk:logicalId",
-      "data": "ExamLogGroup379F4F42"
-    }
-  ],
-  "/MedmeloObservabilityStack/AdminLogGroup/Resource": [
-    {
-      "type": "aws:cdk:logicalId",
-      "data": "AdminLogGroup7F6086AD"
-    }
-  ],
-  "/MedmeloObservabilityStack/MediaLogGroup/Resource": [
-    {
-      "type": "aws:cdk:logicalId",
-      "data": "MediaLogGroupAD312AC2"
-    }
-  ],
   "/MedmeloObservabilityStack/LambdaCoreErrorRate/Resource": [
     {
       "type": "aws:cdk:logicalId",

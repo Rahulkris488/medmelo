@@ -5,34 +5,16 @@
       "data": "MedmeloWafAcl"
     }
   ],
-  "/MedmeloCdnStack/MediaBucketPolicy": [
+  "/MedmeloCdnStack/CloudFrontURL": [
     {
       "type": "aws:cdk:logicalId",
-      "data": "MediaBucketPolicy"
+      "data": "CloudFrontURL"
     }
   ],
-  "/MedmeloCdnStack/AdminSpaBucketPolicy": [
+  "/MedmeloCdnStack/Custom::CrossRegionExportReaderCustomResourceProvider": [
     {
-      "type": "aws:cdk:logicalId",
-      "data": "AdminSpaBucketPolicy"
-    }
-  ],
-  "/MedmeloCdnStack/CloudFrontDomain": [
-    {
-      "type": "aws:cdk:logicalId",
-      "data": "CloudFrontDomain"
-    }
-  ],
-  "/MedmeloCdnStack/CloudFrontDistributionId": [
-    {
-      "type": "aws:cdk:logicalId",
-      "data": "CloudFrontDistributionId"
-    }
-  ],
-  "/MedmeloCdnStack/WafAclArn": [
-    {
-      "type": "aws:cdk:logicalId",
-      "data": "WafAclArn"
+      "type": "aws:cdk:is-custom-resource-handler-customResourceProvider",
+      "data": true
     }
   ],
   "/MedmeloCdnStack/BootstrapVersion": [
@@ -47,153 +29,22 @@
       "data": "CheckBootstrapVersion"
     }
   ],
-  "/MedmeloCdnStack/MediaOAC/Resource": [
+  "/MedmeloCdnStack/ApiCache/Resource": [
     {
       "type": "aws:cdk:logicalId",
-      "data": "MediaOACC4276BB0"
+      "data": "ApiCacheA0112D40"
     }
   ],
-  "/MedmeloCdnStack/AdminOAC/Resource": [
+  "/MedmeloCdnStack/ApiOriginRequest/Resource": [
     {
       "type": "aws:cdk:logicalId",
-      "data": "AdminOACB9A16AC7"
+      "data": "ApiOriginRequestA68121F5"
     }
   ],
-  "/MedmeloCdnStack/ApiCachePolicy/Resource": [
+  "/MedmeloCdnStack/MediaCache/Resource": [
     {
       "type": "aws:cdk:logicalId",
-      "data": "ApiCachePolicyF71AA3E6"
-    }
-  ],
-  "/MedmeloCdnStack/ApiOriginRequestPolicy/Resource": [
-    {
-      "type": "aws:cdk:logicalId",
-      "data": "ApiOriginRequestPolicy7A536D4C"
-    }
-  ],
-  "/MedmeloCdnStack/MediaCachePolicy/Resource": [
-    {
-      "type": "aws:cdk:logicalId",
-      "data": "MediaCachePolicy367B1FB9"
-    }
-  ],
-  "/MedmeloCdnStack/MedmeloDistribution/Origin1": [
-    {
-      "type": "aws:cdk:warning",
-      "data": "Cannot update bucket policy of an imported bucket. You will need to update the policy manually instead.\nSee the \"Setting up OAC with imported S3 buckets\" section of module's README for more info. [ack: @aws-cdk/aws-cloudfront-origins:updateImportedBucketPolicyOac]",
-      "trace": [
-        "Annotations.addMessage (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\aws-cdk-lib\\core\\lib\\annotations.js:1:2270)",
-        "Annotations.addWarningV2 (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\aws-cdk-lib\\core\\lib\\annotations.js:1:984)",
-        "S3BucketOriginWithOAC.bind (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\aws-cdk-lib\\aws-cloudfront-origins\\lib\\s3-bucket-origin.js:2:282)",
-        "WrappedClass.addOrigin (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\aws-cdk-lib\\aws-cloudfront\\lib\\distribution.js:1:23747)",
-        "new Distribution2 (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\aws-cdk-lib\\aws-cloudfront\\lib\\distribution.js:1:13023)",
-        "new Distribution2 (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\aws-cdk-lib\\core\\lib\\prop-injectable.js:1:726)",
-        "new MedmeloCdnStack (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\lib\\cdn-stack.ts:74:26)",
-        "Object.<anonymous> (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\bin\\app.ts:18:1)",
-        "Module._compile (node:internal/modules/cjs/loader:1734:14)",
-        "Module.m._compile (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\ts-node\\src\\index.ts:1618:23)",
-        "loadTS (node:internal/modules/cjs/loader:1826:10)",
-        "Object.require.extensions.<computed> [as .ts] (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\ts-node\\src\\index.ts:1621:12)",
-        "Module.load (node:internal/modules/cjs/loader:1469:32)",
-        "Function._load (node:internal/modules/cjs/loader:1286:12)",
-        "TracingChannel.traceSync (node:diagnostics_channel:322:14)",
-        "wrapModuleLoad (node:internal/modules/cjs/loader:235:24)",
-        "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:151:5)",
-        "phase4 (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\ts-node\\src\\bin.ts:649:14)",
-        "bootstrap (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\ts-node\\src\\bin.ts:95:10)",
-        "main (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\ts-node\\src\\bin.ts:55:10)",
-        "Object.<anonymous> (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\ts-node\\src\\bin.ts:800:3)",
-        "Module._compile (node:internal/modules/cjs/loader:1734:14)",
-        "Object..js (node:internal/modules/cjs/loader:1899:10)",
-        "Module.load (node:internal/modules/cjs/loader:1469:32)",
-        "Function._load (node:internal/modules/cjs/loader:1286:12)",
-        "TracingChannel.traceSync (node:diagnostics_channel:322:14)",
-        "wrapModuleLoad (node:internal/modules/cjs/loader:235:24)",
-        "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:151:5)",
-        "node:internal/main/run_main_module:33:47"
-      ]
-    }
-  ],
-  "/MedmeloCdnStack/MedmeloDistribution/Origin3": [
-    {
-      "type": "aws:cdk:warning",
-      "data": "Cannot update bucket policy of an imported bucket. You will need to update the policy manually instead.\nSee the \"Setting up OAC with imported S3 buckets\" section of module's README for more info. [ack: @aws-cdk/aws-cloudfront-origins:updateImportedBucketPolicyOac]",
-      "trace": [
-        "Annotations.addMessage (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\aws-cdk-lib\\core\\lib\\annotations.js:1:2270)",
-        "Annotations.addWarningV2 (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\aws-cdk-lib\\core\\lib\\annotations.js:1:984)",
-        "S3BucketOriginWithOAC.bind (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\aws-cdk-lib\\aws-cloudfront-origins\\lib\\s3-bucket-origin.js:2:282)",
-        "WrappedClass.addOrigin (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\aws-cdk-lib\\aws-cloudfront\\lib\\distribution.js:1:23747)",
-        "WrappedClass.addBehavior (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\aws-cdk-lib\\aws-cloudfront\\lib\\distribution.js:1:21908)",
-        "WrappedClass.<anonymous> (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\aws-cdk-lib\\core\\lib\\metadata-resource.js:1:2015)",
-        "C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\aws-cdk-lib\\aws-cloudfront\\lib\\distribution.js:1:13291",
-        "Array.forEach (<anonymous>)",
-        "new Distribution2 (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\aws-cdk-lib\\aws-cloudfront\\lib\\distribution.js:1:13244)",
-        "new Distribution2 (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\aws-cdk-lib\\core\\lib\\prop-injectable.js:1:726)",
-        "new MedmeloCdnStack (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\lib\\cdn-stack.ts:74:26)",
-        "Object.<anonymous> (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\bin\\app.ts:18:1)",
-        "Module._compile (node:internal/modules/cjs/loader:1734:14)",
-        "Module.m._compile (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\ts-node\\src\\index.ts:1618:23)",
-        "loadTS (node:internal/modules/cjs/loader:1826:10)",
-        "Object.require.extensions.<computed> [as .ts] (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\ts-node\\src\\index.ts:1621:12)",
-        "Module.load (node:internal/modules/cjs/loader:1469:32)",
-        "Function._load (node:internal/modules/cjs/loader:1286:12)",
-        "TracingChannel.traceSync (node:diagnostics_channel:322:14)",
-        "wrapModuleLoad (node:internal/modules/cjs/loader:235:24)",
-        "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:151:5)",
-        "phase4 (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\ts-node\\src\\bin.ts:649:14)",
-        "bootstrap (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\ts-node\\src\\bin.ts:95:10)",
-        "main (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\ts-node\\src\\bin.ts:55:10)",
-        "Object.<anonymous> (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\ts-node\\src\\bin.ts:800:3)",
-        "Module._compile (node:internal/modules/cjs/loader:1734:14)",
-        "Object..js (node:internal/modules/cjs/loader:1899:10)",
-        "Module.load (node:internal/modules/cjs/loader:1469:32)",
-        "Function._load (node:internal/modules/cjs/loader:1286:12)",
-        "TracingChannel.traceSync (node:diagnostics_channel:322:14)",
-        "wrapModuleLoad (node:internal/modules/cjs/loader:235:24)",
-        "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:151:5)",
-        "node:internal/main/run_main_module:33:47"
-      ]
-    }
-  ],
-  "/MedmeloCdnStack/MedmeloDistribution/Origin4": [
-    {
-      "type": "aws:cdk:warning",
-      "data": "Cannot update bucket policy of an imported bucket. You will need to update the policy manually instead.\nSee the \"Setting up OAC with imported S3 buckets\" section of module's README for more info. [ack: @aws-cdk/aws-cloudfront-origins:updateImportedBucketPolicyOac]",
-      "trace": [
-        "Annotations.addMessage (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\aws-cdk-lib\\core\\lib\\annotations.js:1:2270)",
-        "Annotations.addWarningV2 (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\aws-cdk-lib\\core\\lib\\annotations.js:1:984)",
-        "S3BucketOriginWithOAC.bind (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\aws-cdk-lib\\aws-cloudfront-origins\\lib\\s3-bucket-origin.js:2:282)",
-        "WrappedClass.addOrigin (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\aws-cdk-lib\\aws-cloudfront\\lib\\distribution.js:1:23747)",
-        "WrappedClass.addBehavior (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\aws-cdk-lib\\aws-cloudfront\\lib\\distribution.js:1:21908)",
-        "WrappedClass.<anonymous> (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\aws-cdk-lib\\core\\lib\\metadata-resource.js:1:2015)",
-        "C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\aws-cdk-lib\\aws-cloudfront\\lib\\distribution.js:1:13291",
-        "Array.forEach (<anonymous>)",
-        "new Distribution2 (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\aws-cdk-lib\\aws-cloudfront\\lib\\distribution.js:1:13244)",
-        "new Distribution2 (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\aws-cdk-lib\\core\\lib\\prop-injectable.js:1:726)",
-        "new MedmeloCdnStack (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\lib\\cdn-stack.ts:74:26)",
-        "Object.<anonymous> (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\bin\\app.ts:18:1)",
-        "Module._compile (node:internal/modules/cjs/loader:1734:14)",
-        "Module.m._compile (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\ts-node\\src\\index.ts:1618:23)",
-        "loadTS (node:internal/modules/cjs/loader:1826:10)",
-        "Object.require.extensions.<computed> [as .ts] (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\ts-node\\src\\index.ts:1621:12)",
-        "Module.load (node:internal/modules/cjs/loader:1469:32)",
-        "Function._load (node:internal/modules/cjs/loader:1286:12)",
-        "TracingChannel.traceSync (node:diagnostics_channel:322:14)",
-        "wrapModuleLoad (node:internal/modules/cjs/loader:235:24)",
-        "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:151:5)",
-        "phase4 (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\ts-node\\src\\bin.ts:649:14)",
-        "bootstrap (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\ts-node\\src\\bin.ts:95:10)",
-        "main (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\ts-node\\src\\bin.ts:55:10)",
-        "Object.<anonymous> (C:\\Users\\sathi\\Desktop\\clients\\med\\medmelo\\infrastructure\\node_modules\\ts-node\\src\\bin.ts:800:3)",
-        "Module._compile (node:internal/modules/cjs/loader:1734:14)",
-        "Object..js (node:internal/modules/cjs/loader:1899:10)",
-        "Module.load (node:internal/modules/cjs/loader:1469:32)",
-        "Function._load (node:internal/modules/cjs/loader:1286:12)",
-        "TracingChannel.traceSync (node:diagnostics_channel:322:14)",
-        "wrapModuleLoad (node:internal/modules/cjs/loader:235:24)",
-        "Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:151:5)",
-        "node:internal/main/run_main_module:33:47"
-      ]
+      "data": "MediaCacheC36E554A"
     }
   ],
   "/MedmeloCdnStack/MedmeloDistribution/Resource": [
@@ -206,6 +57,36 @@
     {
       "type": "aws:cdk:logicalId",
       "data": "CDKMetadata"
+    }
+  ],
+  "/MedmeloCdnStack/Custom::CrossRegionExportReaderCustomResourceProvider/Role": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CustomCrossRegionExportReaderCustomResourceProviderRole10531BBD"
+    }
+  ],
+  "/MedmeloCdnStack/Custom::CrossRegionExportReaderCustomResourceProvider/Handler": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CustomCrossRegionExportReaderCustomResourceProviderHandler46647B68"
+    }
+  ],
+  "/MedmeloCdnStack/ExportsReader/Resource/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsReader8B249524"
+    }
+  ],
+  "/MedmeloCdnStack/MedmeloDistribution/Origin1/S3Origin/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MedmeloDistributionOrigin1S3Origin1ADED8C5"
+    }
+  ],
+  "/MedmeloCdnStack/MedmeloDistribution/Origin3/S3Origin/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "MedmeloDistributionOrigin3S3Origin8FC66229"
     }
   ]
 }

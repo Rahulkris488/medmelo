@@ -11,16 +11,66 @@
       "data": "MedmeloRedisProd"
     }
   ],
+  "/MedmeloDataStack/ExamSessions": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "ExamSessionsC2B719C4"
+      }
+    }
+  ],
+  "/MedmeloDataStack/FlashcardProgress": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "FlashcardProgress0BC63740"
+      }
+    }
+  ],
+  "/MedmeloDataStack/UserActivity": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "UserActivity1B657B86"
+      }
+    }
+  ],
+  "/MedmeloDataStack/OneLinerProgress": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "OneLinerProgressFCD4F05B"
+      }
+    }
+  ],
   "/MedmeloDataStack/AuroraClusterEndpoint": [
     {
       "type": "aws:cdk:logicalId",
       "data": "AuroraClusterEndpoint"
     }
   ],
-  "/MedmeloDataStack/AuroraClusterIdentifier": [
+  "/MedmeloDataStack/ExamSessionsTableName": [
     {
       "type": "aws:cdk:logicalId",
-      "data": "AuroraClusterIdentifier"
+      "data": "ExamSessionsTableName"
+    }
+  ],
+  "/MedmeloDataStack/FlashcardProgressTableName": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "FlashcardProgressTableName"
+    }
+  ],
+  "/MedmeloDataStack/UserActivityTableName": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "UserActivityTableName"
+    }
+  ],
+  "/MedmeloDataStack/OneLinerProgressTableName": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "OneLinerProgressTableName"
     }
   ],
   "/MedmeloDataStack/BootstrapVersion": [
@@ -47,28 +97,28 @@
       "data": "AuroraCluster23D869C0"
     }
   ],
-  "/MedmeloDataStack/ExamResultsDLQ/Resource": [
+  "/MedmeloDataStack/ExamSessions/Resource": [
     {
       "type": "aws:cdk:logicalId",
-      "data": "ExamResultsDLQ4D285B3A"
+      "data": "ExamSessionsC2B719C4"
     }
   ],
-  "/MedmeloDataStack/ExamResultsQueue/Resource": [
+  "/MedmeloDataStack/FlashcardProgress/Resource": [
     {
       "type": "aws:cdk:logicalId",
-      "data": "ExamResultsQueue921E4EFA"
+      "data": "FlashcardProgress0BC63740"
     }
   ],
-  "/MedmeloDataStack/NotificationsDLQ/Resource": [
+  "/MedmeloDataStack/UserActivity/Resource": [
     {
       "type": "aws:cdk:logicalId",
-      "data": "NotificationsDLQ7EE1DB27"
+      "data": "UserActivity1B657B86"
     }
   ],
-  "/MedmeloDataStack/NotificationsQueue/Resource": [
+  "/MedmeloDataStack/OneLinerProgress/Resource": [
     {
       "type": "aws:cdk:logicalId",
-      "data": "NotificationsQueue3B766469"
+      "data": "OneLinerProgressFCD4F05B"
     }
   ],
   "/MedmeloDataStack/CDKMetadata/Default": [
@@ -77,22 +127,16 @@
       "data": "CDKMetadata"
     }
   ],
-  "/MedmeloDataStack/AuroraCluster/Secret/Resource": [
+  "/MedmeloDataStack/AuroraSecret/Attachment/Resource": [
     {
       "type": "aws:cdk:logicalId",
-      "data": "AuroraClusterSecret8E4F2BC8"
+      "data": "AuroraSecretAttachment65089D67"
     }
   ],
   "/MedmeloDataStack/AuroraCluster/writer/Resource": [
     {
       "type": "aws:cdk:logicalId",
       "data": "AuroraClusterwriter499C523E"
-    }
-  ],
-  "/MedmeloDataStack/AuroraCluster/Secret/Attachment/Resource": [
-    {
-      "type": "aws:cdk:logicalId",
-      "data": "AuroraClusterSecretAttachmentDB8032DA"
     }
   ]
 }

@@ -1,16 +1,16 @@
 {
   "version": "52.0.0",
   "files": {
-    "86807923c4c91fbf153caaecaa749109a0227b14162ca803fadc4013f4ce8506": {
+    "fc09bbce9d24b62c8b883dcffb478d50d600306c33c0949e92575636acc6b2d0": {
       "displayName": "MedmeloDataStack Template",
       "source": {
         "path": "MedmeloDataStack.template.json",
         "packaging": "file"
       },
       "destinations": {
-        "101374115637-ap-south-1-aa087769": {
+        "101374115637-ap-south-1-a45fd797": {
           "bucketName": "cdk-hnb659fds-assets-101374115637-ap-south-1",
-          "objectKey": "86807923c4c91fbf153caaecaa749109a0227b14162ca803fadc4013f4ce8506.json",
+          "objectKey": "fc09bbce9d24b62c8b883dcffb478d50d600306c33c0949e92575636acc6b2d0.json",
           "region": "ap-south-1",
           "assumeRoleArn": "arn:${AWS::Partition}:iam::101374115637:role/cdk-hnb659fds-file-publishing-role-101374115637-ap-south-1"
         }

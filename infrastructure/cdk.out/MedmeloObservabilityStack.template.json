@@ -22,54 +22,6 @@
     "aws:cdk:path": "MedmeloObservabilityStack/MedmeloAlerts/medmelodev.app@gmail.com/Resource"
    }
   },
-  "CoreLogGroupECDC63E5": {
-   "Type": "AWS::Logs::LogGroup",
-   "Properties": {
-    "LogGroupName": "/aws/lambda/medmelo-core-prod",
-    "RetentionInDays": 30
-   },
-   "UpdateReplacePolicy": "Retain",
-   "DeletionPolicy": "Retain",
-   "Metadata": {
-    "aws:cdk:path": "MedmeloObservabilityStack/CoreLogGroup/Resource"
-   }
-  },
-  "ExamLogGroup379F4F42": {
-   "Type": "AWS::Logs::LogGroup",
-   "Properties": {
-    "LogGroupName": "/aws/lambda/medmelo-exam-prod",
-    "RetentionInDays": 90
-   },
-   "UpdateReplacePolicy": "Retain",
-   "DeletionPolicy": "Retain",
-   "Metadata": {
-    "aws:cdk:path": "MedmeloObservabilityStack/ExamLogGroup/Resource"
-   }
-  },
-  "AdminLogGroup7F6086AD": {
-   "Type": "AWS::Logs::LogGroup",
-   "Properties": {
-    "LogGroupName": "/aws/lambda/medmelo-admin-prod",
-    "RetentionInDays": 90
-   },
-   "UpdateReplacePolicy": "Retain",
-   "DeletionPolicy": "Retain",
-   "Metadata": {
-    "aws:cdk:path": "MedmeloObservabilityStack/AdminLogGroup/Resource"
-   }
-  },
-  "MediaLogGroupAD312AC2": {
-   "Type": "AWS::Logs::LogGroup",
-   "Properties": {
-    "LogGroupName": "/aws/lambda/medmelo-media-prod",
-    "RetentionInDays": 30
-   },
-   "UpdateReplacePolicy": "Retain",
-   "DeletionPolicy": "Retain",
-   "Metadata": {
-    "aws:cdk:path": "MedmeloObservabilityStack/MediaLogGroup/Resource"
-   }
-  },
   "LambdaCoreErrorRateA95444E5": {
    "Type": "AWS::CloudWatch::Alarm",
    "Properties": {
@@ -78,42 +30,95 @@
       "Ref": "MedmeloAlerts0C4E1D15"
      }
     ],
-    "AlarmDescription": "Lambda-Core error rate exceeded 2%",
     "AlarmName": "LambdaCoreErrorRate",
     "ComparisonOperator": "GreaterThanOrEqualToThreshold",
-    "Dimensions": [
+    "EvaluationPeriods": 1,
+    "Metrics": [
      {
-      "Name": "FunctionName",
-      "Value": {
-       "Fn::Select": [
-        6,
-        {
-         "Fn::Split": [
-          ":",
-          {
-           "Fn::Join": [
-            "",
-            [
-             "arn:",
-             {
-              "Ref": "AWS::Partition"
-             },
-             ":lambda:ap-south-1:101374115637:function:medmelo-core-prod"
-            ]
+      "Expression": "IF(invocations > 0, errors / invocations, 0)",
+      "Id": "expr_1",
+      "ReturnData": true
+     },
+     {
+      "Id": "errors",
+      "MetricStat": {
+       "Metric": {
+        "Dimensions": [
+         {
+          "Name": "FunctionName",
+          "Value": {
+           "Fn::Select": [
+            6,
+            {
+             "Fn::Split": [
+              ":",
+              {
+               "Fn::Join": [
+                "",
+                [
+                 "arn:",
+                 {
+                  "Ref": "AWS::Partition"
+                 },
+                 ":lambda:ap-south-1:101374115637:function:medmelo-core-prod"
+                ]
+               ]
+              }
+             ]
+            }
            ]
           }
-         ]
-        }
-       ]
-      }
+         }
+        ],
+        "MetricName": "Errors",
+        "Namespace": "AWS/Lambda"
+       },
+       "Period": 300,
+       "Stat": "Sum"
+      },
+      "ReturnData": false
+     },
+     {
+      "Id": "invocations",
+      "MetricStat": {
+       "Metric": {
+        "Dimensions": [
+         {
+          "Name": "FunctionName",
+          "Value": {
+           "Fn::Select": [
+            6,
+            {
+             "Fn::Split": [
+              ":",
+              {
+               "Fn::Join": [
+                "",
+                [
+                 "arn:",
+                 {
+                  "Ref": "AWS::Partition"
+                 },
+                 ":lambda:ap-south-1:101374115637:function:medmelo-core-prod"
+                ]
+               ]
+              }
+             ]
+            }
+           ]
+          }
+         }
+        ],
+        "MetricName": "Invocations",
+        "Namespace": "AWS/Lambda"
+       },
+       "Period": 300,
+       "Stat": "Sum"
+      },
+      "ReturnData": false
      }
     ],
-    "EvaluationPeriods": 1,
-    "MetricName": "Errors",
-    "Namespace": "AWS/Lambda",
-    "Period": 300,
-    "Statistic": "Sum",
-    "Threshold": 2,
+    "Threshold": 0.02,
     "TreatMissingData": "notBreaching"
    },
    "Metadata": {
@@ -128,42 +133,95 @@
       "Ref": "MedmeloAlerts0C4E1D15"
      }
     ],
-    "AlarmDescription": "URGENT: Lambda-Exam error rate exceeded 0.5% — student grading affected",
     "AlarmName": "LambdaExamErrorRate",
     "ComparisonOperator": "GreaterThanOrEqualToThreshold",
-    "Dimensions": [
+    "EvaluationPeriods": 1,
+    "Metrics": [
      {
-      "Name": "FunctionName",
-      "Value": {
-       "Fn::Select": [
-        6,
-        {
-         "Fn::Split": [
-          ":",
-          {
-           "Fn::Join": [
-            "",
-            [
-             "arn:",
-             {
-              "Ref": "AWS::Partition"
-             },
-             ":lambda:ap-south-1:101374115637:function:medmelo-exam-prod"
-            ]
+      "Expression": "IF(invocations > 0, errors / invocations, 0)",
+      "Id": "expr_1",
+      "ReturnData": true
+     },
+     {
+      "Id": "errors",
+      "MetricStat": {
+       "Metric": {
+        "Dimensions": [
+         {
+          "Name": "FunctionName",
+          "Value": {
+           "Fn::Select": [
+            6,
+            {
+             "Fn::Split": [
+              ":",
+              {
+               "Fn::Join": [
+                "",
+                [
+                 "arn:",
+                 {
+                  "Ref": "AWS::Partition"
+                 },
+                 ":lambda:ap-south-1:101374115637:function:medmelo-exam-prod"
+                ]
+               ]
+              }
+             ]
+            }
            ]
           }
-         ]
-        }
-       ]
-      }
+         }
+        ],
+        "MetricName": "Errors",
+        "Namespace": "AWS/Lambda"
+       },
+       "Period": 60,
+       "Stat": "Sum"
+      },
+      "ReturnData": false
+     },
+     {
+      "Id": "invocations",
+      "MetricStat": {
+       "Metric": {
+        "Dimensions": [
+         {
+          "Name": "FunctionName",
+          "Value": {
+           "Fn::Select": [
+            6,
+            {
+             "Fn::Split": [
+              ":",
+              {
+               "Fn::Join": [
+                "",
+                [
+                 "arn:",
+                 {
+                  "Ref": "AWS::Partition"
+                 },
+                 ":lambda:ap-south-1:101374115637:function:medmelo-exam-prod"
+                ]
+               ]
+              }
+             ]
+            }
+           ]
+          }
+         }
+        ],
+        "MetricName": "Invocations",
+        "Namespace": "AWS/Lambda"
+       },
+       "Period": 60,
+       "Stat": "Sum"
+      },
+      "ReturnData": false
      }
     ],
-    "EvaluationPeriods": 1,
-    "MetricName": "Errors",
-    "Namespace": "AWS/Lambda",
-    "Period": 60,
-    "Statistic": "Sum",
-    "Threshold": 1,
+    "Threshold": 0.005,
     "TreatMissingData": "notBreaching"
    },
    "Metadata": {
@@ -184,7 +242,9 @@
     "Dimensions": [
      {
       "Name": "ApiId",
-      "Value": "3x5r5y26yd"
+      "Value": {
+       "Fn::ImportValue": "MedmeloApiStack:ExportsOutputRefApiF70053CD5653BA4D"
+      }
      }
     ],
     "EvaluationPeriods": 1,
@@ -335,7 +395,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/02LTQ7CIBCFz9I9HWvtBdRENyYm1r2ZQq20FAgDdkG4u8HGxNX73l8NddNAVeBCJRdTqWQHsfXIJ4YLPSJpgng3VnJ2fOoV2tARd9J6aXRO/31iygwE8WKGszPB5v7HiSmcO4FwCprn8QGpZ1yZIBb0/AVxr9DN+fKFlDJeg7fBJ6aN6GGkzbvewbaCqhhJytIF7eXcw23VDx5JmEHPAAAA"
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/02LQQ6CMBBFz8K+jNhwATVxayLuzTDFOFBawrSyaHp3U9m4+u+/5GnQbQtNhZvUZKbacg+pC0iTwk2eSZxAeviFSV1ebocu9kIrL4G9K/b/Z2Vx7g3CNToq4owyKLI+mg0DvSGdLK5zyX6Qc8FbDEsMWTlvBhjl8NEtHDU01SjM9Rpd4HmA+75fGm0KR7MAAAA="
    },
    "Metadata": {
     "aws:cdk:path": "MedmeloObservabilityStack/CDKMetadata/Default"

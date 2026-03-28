@@ -2,7 +2,7 @@
   "version": "52.0.0",
   "files": {
     "517775f84615a6c283008f3f0f6d274c659ff544665569c5eab5efa03b97285d": {
-      "displayName": "LambdaCore/Code",
+      "displayName": "CoreFn/Code",
       "source": {
         "path": "asset.517775f84615a6c283008f3f0f6d274c659ff544665569c5eab5efa03b97285d",
         "packaging": "zip"
@@ -16,23 +16,8 @@
         }
       }
     },
-    "2819175352ad1ce0dae768e83fc328fb70fb5f10b4a8ff0ccbcb791f02b0716d": {
-      "displayName": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/Code",
-      "source": {
-        "path": "asset.2819175352ad1ce0dae768e83fc328fb70fb5f10b4a8ff0ccbcb791f02b0716d",
-        "packaging": "zip"
-      },
-      "destinations": {
-        "101374115637-ap-south-1-c71e39b9": {
-          "bucketName": "cdk-hnb659fds-assets-101374115637-ap-south-1",
-          "objectKey": "2819175352ad1ce0dae768e83fc328fb70fb5f10b4a8ff0ccbcb791f02b0716d.zip",
-          "region": "ap-south-1",
-          "assumeRoleArn": "arn:${AWS::Partition}:iam::101374115637:role/cdk-hnb659fds-file-publishing-role-101374115637-ap-south-1"
-        }
-      }
-    },
     "ed74ff35ccabf69fde90cbe7e63b4d40583e22d71ffe53147be19ca862e0e2a0": {
-      "displayName": "LambdaExam/Code",
+      "displayName": "ExamFn/Code",
       "source": {
         "path": "asset.ed74ff35ccabf69fde90cbe7e63b4d40583e22d71ffe53147be19ca862e0e2a0",
         "packaging": "zip"
@@ -47,7 +32,7 @@
       }
     },
     "23884a1eb03a7f89e322797b24cc04e1d6801d71a20ffc0b85dc3d2cb690e735": {
-      "displayName": "LambdaAdmin/Code",
+      "displayName": "AdminFn/Code",
       "source": {
         "path": "asset.23884a1eb03a7f89e322797b24cc04e1d6801d71a20ffc0b85dc3d2cb690e735",
         "packaging": "zip"
@@ -62,7 +47,7 @@
       }
     },
     "089b0aa5884c363025033f7b9328170201435675e882b565d529cda3380ea476": {
-      "displayName": "LambdaMedia/Code",
+      "displayName": "MediaFn/Code",
       "source": {
         "path": "asset.089b0aa5884c363025033f7b9328170201435675e882b565d529cda3380ea476",
         "packaging": "zip"
@@ -76,16 +61,31 @@
         }
       }
     },
-    "02b3fa54516325f1e39d99fede339c5c6168c21688b8ebdc1129eda30a0dbdae": {
+    "d2191f6f199b95d1c044799f514b1ceca87200b3014c43c34839aad03dc69b8c": {
+      "displayName": "MedmeloApiStack/Custom::CrossRegionExportWriterCustomResourceProvider Code",
+      "source": {
+        "path": "asset.d2191f6f199b95d1c044799f514b1ceca87200b3014c43c34839aad03dc69b8c",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "101374115637-ap-south-1-02c94b7c": {
+          "bucketName": "cdk-hnb659fds-assets-101374115637-ap-south-1",
+          "objectKey": "d2191f6f199b95d1c044799f514b1ceca87200b3014c43c34839aad03dc69b8c.zip",
+          "region": "ap-south-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::101374115637:role/cdk-hnb659fds-file-publishing-role-101374115637-ap-south-1"
+        }
+      }
+    },
+    "58baef24d08d7d6c1f8ea0dc1a48ca3aab1be4b72c2079a628374066cb65c040": {
       "displayName": "MedmeloApiStack Template",
       "source": {
         "path": "MedmeloApiStack.template.json",
         "packaging": "file"
       },
       "destinations": {
-        "101374115637-ap-south-1-c56304f9": {
+        "101374115637-ap-south-1-6e2bc95c": {
           "bucketName": "cdk-hnb659fds-assets-101374115637-ap-south-1",
-          "objectKey": "02b3fa54516325f1e39d99fede339c5c6168c21688b8ebdc1129eda30a0dbdae.json",
+          "objectKey": "58baef24d08d7d6c1f8ea0dc1a48ca3aab1be4b72c2079a628374066cb65c040.json",
           "region": "ap-south-1",
           "assumeRoleArn": "arn:${AWS::Partition}:iam::101374115637:role/cdk-hnb659fds-file-publishing-role-101374115637-ap-south-1"
         }

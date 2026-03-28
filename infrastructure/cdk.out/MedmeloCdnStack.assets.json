@@ -1,16 +1,31 @@
 {
   "version": "52.0.0",
   "files": {
-    "91edd18bd3f0362fbb750842ca65045c9a09d870bcdf1967842b50f1a010b373": {
+    "f06f7035054cb2aada184c7c251ec5cb31fb6b5e975284939b9ff097603ea769": {
+      "displayName": "MedmeloCdnStack/Custom::CrossRegionExportReaderCustomResourceProvider Code",
+      "source": {
+        "path": "asset.f06f7035054cb2aada184c7c251ec5cb31fb6b5e975284939b9ff097603ea769",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "101374115637-us-east-1-4ea2c86b": {
+          "bucketName": "cdk-hnb659fds-assets-101374115637-us-east-1",
+          "objectKey": "f06f7035054cb2aada184c7c251ec5cb31fb6b5e975284939b9ff097603ea769.zip",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::101374115637:role/cdk-hnb659fds-file-publishing-role-101374115637-us-east-1"
+        }
+      }
+    },
+    "24465c290206eb0b4fb5976f89b375d79e2e1d2375050ce30b0ba44bffefc64c": {
       "displayName": "MedmeloCdnStack Template",
       "source": {
         "path": "MedmeloCdnStack.template.json",
         "packaging": "file"
       },
       "destinations": {
-        "101374115637-us-east-1-819ae270": {
+        "101374115637-us-east-1-fba1a246": {
           "bucketName": "cdk-hnb659fds-assets-101374115637-us-east-1",
-          "objectKey": "91edd18bd3f0362fbb750842ca65045c9a09d870bcdf1967842b50f1a010b373.json",
+          "objectKey": "24465c290206eb0b4fb5976f89b375d79e2e1d2375050ce30b0ba44bffefc64c.json",
           "region": "us-east-1",
           "assumeRoleArn": "arn:${AWS::Partition}:iam::101374115637:role/cdk-hnb659fds-file-publishing-role-101374115637-us-east-1"
         }

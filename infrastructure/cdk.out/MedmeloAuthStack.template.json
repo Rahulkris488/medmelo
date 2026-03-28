@@ -1,0 +1,55 @@
+{
+ "Outputs": {
+  "UserPoolId": {
+   "Value": "ap-south-1_xo19c3jCI"
+  },
+  "UserPoolClientId": {
+   "Value": "3r1fht3ht9g1cdv3n0f7g8rc1r"
+  }
+ },
+ "Resources": {
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/zPSMzIx0TNQTCwv1k1OydbNyUzSqw4uSUzO1glKLc4vLUpO1XFOy/MvLSkoLanVyctPSdXLKtYvMzLRMzTSM1DMKs7M1C0qzSvJzE3VC4LQAHa9e5JUAAAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "MedmeloAuthStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}
