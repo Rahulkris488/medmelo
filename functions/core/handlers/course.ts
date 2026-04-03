@@ -55,12 +55,13 @@ const withCacheLock = async <T>(
     await new Promise(r => setTimeout(r, 150));
     const retried = await cacheGet<T>(cacheKey);
     if (retried) return retried;
-    // If still no cache (fetch took longer than 150ms), fall through to DB
+    // Lock not ours — fetch directly without touching the lock
+    return fetchFn();
   }
 
   try {
     const data = await fetchFn();
-    if (Array.isArray(data) && data.length > 0) {
+    if (Array.isArray(data)) {
       await cacheSet(cacheKey, data, ttlSeconds);
     }
     return data;
@@ -74,7 +75,7 @@ let _redis: Redis | null = null;
 const getRedis = (): Redis => {
   if (_redis) return _redis;
   const endpoint = process.env.REDIS_ENDPOINT!;
-  _redis = new Redis({ host: endpoint, port: 6379, tls: {} });
+  _redis = new Redis({ host: endpoint, port: 6379, tls: {}, connectTimeout: 3000, commandTimeout: 2000, maxRetriesPerRequest: 2, lazyConnect: true });
   return _redis;
 };
 

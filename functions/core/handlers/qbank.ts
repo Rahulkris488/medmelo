@@ -70,7 +70,9 @@ export const getQuestionSets = async (event: ApiEvent): Promise<ApiResponse> => 
       [auth.userId],
     );
 
-    if (user?.profileCompleted && user.subCourse && chapter.courseId !== user.subCourse) {
+    if (!user) throw Errors.forbidden('User account not found');
+
+    if (user.profileCompleted && user.subCourse && chapter.courseId !== user.subCourse) {
       throw Errors.forbidden('You are not enrolled in this course');
     }
 
@@ -135,7 +137,9 @@ export const getQuestions = async (event: ApiEvent): Promise<ApiResponse> => {
       [auth.userId],
     );
 
-    if (user?.profileCompleted && user.subCourse && set.courseId !== user.subCourse) {
+    if (!user) throw Errors.forbidden('User account not found');
+
+    if (user.profileCompleted && user.subCourse && set.courseId !== user.subCourse) {
       throw Errors.forbidden('You are not enrolled in this course');
     }
 
@@ -198,6 +202,7 @@ export const getQuestions = async (event: ApiEvent): Promise<ApiResponse> => {
 // - [INPUT] answers validated: must be object, keys must be valid UUIDs,
 //           values must be integers 0–5 (max 6 options) ✅
 // - [INPUT] Max 100 answers per submission — prevents huge payload abuse ✅
+// - [AUTHZ] Set verified to belong to user's enrolled sub-course ✅
 // - [AUTHZ] Question IDs verified against the set in DB — prevents answer injection
 //           (user cannot submit answers for questions not in this set) ✅
 // - [IDOR]  Score returned to submitting user only — userId from JWT ✅
@@ -236,13 +241,46 @@ export const submitAnswers = async (event: ApiEvent): Promise<ApiResponse> => {
       answers[qId.toLowerCase()] = optIdx;
     }
 
+    // Verify set exists and belongs to user's enrolled course
+    const set = await queryOne<{ courseId: string }>(
+      `SELECT s.course_id AS "courseId"
+       FROM question_sets qs
+       JOIN chapters c  ON c.chapter_id  = qs.chapter_id
+       JOIN subjects s  ON s.subject_id  = c.subject_id
+       WHERE qs.question_set_id = $1 AND qs.is_active = TRUE`,
+      [setId],
+    );
+
+    if (!set) throw Errors.notFound('Question set');
+
+    const user = await queryOne<{ subCourse: string | null; profileCompleted: boolean }>(
+      `SELECT sub_course AS "subCourse", profile_completed AS "profileCompleted"
+       FROM users WHERE user_id = $1`,
+      [auth.userId],
+    );
+
+    if (!user) throw Errors.forbidden('User account not found');
+
+    if (user.profileCompleted && user.subCourse && set.courseId !== user.subCourse) {
+      throw Errors.forbidden('You are not enrolled in this course');
+    }
+
     // Fetch questions from DB (not cache) — authoritative source for scoring
-    const questions = await query<{ questionId: string; options: QuestionOption[] }>(
+    const rawQuestions = await query<{ questionId: string; options: QuestionOption[] }>(
       `SELECT question_id AS "questionId", options
        FROM questions
        WHERE question_set_id = $1 AND is_active = TRUE`,
       [setId],
     );
+
+    // Filter out questions with no correct option — guards against corrupted DB data
+    const questions = rawQuestions.filter(q => {
+      const hasCorrect = Array.isArray(q.options) && (q.options as QuestionOption[]).some(o => o.isCorrect === true);
+      if (!hasCorrect) {
+        log.warn('submitAnswers: question has no correct option, skipping', { questionId: q.questionId });
+      }
+      return hasCorrect;
+    });
 
     if (questions.length === 0) throw Errors.notFound('Question set');
 
