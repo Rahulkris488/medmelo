@@ -8,6 +8,7 @@ import { Construct } from 'constructs';
 
 interface MedmeloObservabilityStackProps extends cdk.StackProps {
     apiId: string;
+    alertEmail: string;
 }
 
 export class MedmeloObservabilityStack extends cdk.Stack {
@@ -22,7 +23,7 @@ export class MedmeloObservabilityStack extends cdk.Stack {
         });
 
         alertTopic.addSubscription(
-            new subscriptions.EmailSubscription('medmelodev.app@gmail.com')
+            new subscriptions.EmailSubscription(props.alertEmail)
         );
 
         // 2. LOG GROUPS (Removed — managed by ApiStack)

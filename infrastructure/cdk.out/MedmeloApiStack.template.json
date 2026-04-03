@@ -207,6 +207,9 @@
       "NODE_ENV": "production",
       "EXAM_QUEUE_URL": {
        "Ref": "ExamQueue47041025"
+      },
+      "REDIS_ENDPOINT": {
+       "Fn::ImportValue": "MedmeloDataStack:ExportsOutputFnGetAttMedmeloRedisProdPrimaryEndPointAddress9059102E"
       }
      }
     },
@@ -421,6 +424,9 @@
       "NODE_ENV": "production",
       "EXAM_QUEUE_URL": {
        "Ref": "ExamQueue47041025"
+      },
+      "REDIS_ENDPOINT": {
+       "Fn::ImportValue": "MedmeloDataStack:ExportsOutputFnGetAttMedmeloRedisProdPrimaryEndPointAddress9059102E"
       }
      }
     },
@@ -596,6 +602,9 @@
       "NODE_ENV": "production",
       "EXAM_QUEUE_URL": {
        "Ref": "ExamQueue47041025"
+      },
+      "REDIS_ENDPOINT": {
+       "Fn::ImportValue": "MedmeloDataStack:ExportsOutputFnGetAttMedmeloRedisProdPrimaryEndPointAddress9059102E"
       }
      }
     },
@@ -770,6 +779,9 @@
       "NODE_ENV": "production",
       "EXAM_QUEUE_URL": {
        "Ref": "ExamQueue47041025"
+      },
+      "REDIS_ENDPOINT": {
+       "Fn::ImportValue": "MedmeloDataStack:ExportsOutputFnGetAttMedmeloRedisProdPrimaryEndPointAddress9059102E"
       }
      }
     },

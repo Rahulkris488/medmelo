@@ -17,6 +17,7 @@ interface MedmeloApiStackProps extends cdk.StackProps {
   lambdaSecurityGroup: ec2.ISecurityGroup;
   cognitoUserPoolId: string;
   cognitoClientId: string;
+  redisEndpoint: string;
 }
 
 export class MedmeloApiStack extends cdk.Stack {
@@ -25,7 +26,7 @@ export class MedmeloApiStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: MedmeloApiStackProps) {
     super(scope, id, props);
 
-    const { vpc, lambdaSecurityGroup, cognitoUserPoolId, cognitoClientId } = props;
+    const { vpc, lambdaSecurityGroup, cognitoUserPoolId, cognitoClientId, redisEndpoint } = props;
 
     // ─────────────────────────────────────────────────────────────
     // SQS
@@ -61,8 +62,9 @@ export class MedmeloApiStack extends cdk.Stack {
         externalModules: ['@aws-sdk/*'],
       },
       environment: {
-        NODE_ENV: 'production',
-        EXAM_QUEUE_URL: examQueue.queueUrl,
+        NODE_ENV:        'production',
+        EXAM_QUEUE_URL:  examQueue.queueUrl,
+        REDIS_ENDPOINT:  redisEndpoint,
       },
     };
 

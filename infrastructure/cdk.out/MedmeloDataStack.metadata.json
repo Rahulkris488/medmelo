@@ -127,6 +127,12 @@
       "data": "CDKMetadata"
     }
   ],
+  "/MedmeloDataStack/Exports/Output{\"Fn::GetAtt\":[\"MedmeloRedisProd\",\"PrimaryEndPoint.Address\"]}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputFnGetAttMedmeloRedisProdPrimaryEndPointAddress9059102E"
+    }
+  ],
   "/MedmeloDataStack/AuroraSecret/Attachment/Resource": [
     {
       "type": "aws:cdk:logicalId",

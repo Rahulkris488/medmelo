@@ -10,94 +10,96 @@ import { MedmeloAuthStack } from '../lib/auth-stack';
 const app = new cdk.App();
 
 // ─────────────────────────────────────────────────────────────
-// ✅ CENTRALIZED ENV CONFIG
+// CONFIG — all values live in cdk.json under "context"
 // ─────────────────────────────────────────────────────────────
-const env = {
-  account: '101374115637',
-  region: 'ap-south-1',
+const ctx = {
+  account:                 app.node.tryGetContext('account'),
+  region:                  app.node.tryGetContext('region'),
+  vpcName:                 app.node.tryGetContext('vpcName'),
+  lambdaSgId:              app.node.tryGetContext('lambdaSgId'),
+  cognitoUserPoolId:       app.node.tryGetContext('cognitoUserPoolId'),
+  cognitoUserPoolClientId: app.node.tryGetContext('cognitoUserPoolClientId'),
+  auroraSubnetIds:         app.node.tryGetContext('auroraSubnetIds') as string[],
+  auroraSgId:              app.node.tryGetContext('auroraSgId'),
+  redisSubnetIds:          app.node.tryGetContext('redisSubnetIds') as string[],
+  redisSgId:               app.node.tryGetContext('redisSgId'),
+  alertEmail:              app.node.tryGetContext('alertEmail'),
 };
 
-// ─────────────────────────────────────────────────────────────
-// ✅ NETWORKING (VPC + SG)
-// ─────────────────────────────────────────────────────────────
-const networkingStack = new MedmeloNetworkingStack(
-  app,
-  'MedmeloNetworkingStack',
-  { env }
-);
+const env = { account: ctx.account, region: ctx.region };
 
 // ─────────────────────────────────────────────────────────────
-// ✅ AUTH (Cognito)
+// NETWORKING (VPC + SG)
+// ─────────────────────────────────────────────────────────────
+const networkingStack = new MedmeloNetworkingStack(app, 'MedmeloNetworkingStack', {
+  env,
+  vpcName:              ctx.vpcName,
+  lambdaSecurityGroupId: ctx.lambdaSgId,
+});
+
+// ─────────────────────────────────────────────────────────────
+// AUTH (Cognito)
 // ─────────────────────────────────────────────────────────────
 const authStack = new MedmeloAuthStack(app, 'MedmeloAuthStack', {
   env,
-
-  userPoolId: 'ap-south-1_xo19c3jCI',
-  userPoolClientId: '3r1fht3ht9g1cdv3n0f7g8rc1r',
+  userPoolId:       ctx.cognitoUserPoolId,
+  userPoolClientId: ctx.cognitoUserPoolClientId,
 });
 
 // ─────────────────────────────────────────────────────────────
-// ✅ DATA LAYER
+// DATA LAYER
 // ─────────────────────────────────────────────────────────────
 const dataStack = new MedmeloDataStack(app, 'MedmeloDataStack', {
   env,
+  auroraSubnetIds: ctx.auroraSubnetIds,
+  auroraSgId:      ctx.auroraSgId,
+  redisSubnetIds:  ctx.redisSubnetIds,
+  redisSgId:       ctx.redisSgId,
 });
 
 // ─────────────────────────────────────────────────────────────
-// ✅ STORAGE (S3)
+// STORAGE (S3)
 // ─────────────────────────────────────────────────────────────
-const storageStack = new MedmeloStorageStack(app, 'MedmeloStorageStack', {
-  env,
-});
+const storageStack = new MedmeloStorageStack(app, 'MedmeloStorageStack', { env });
 
 // ─────────────────────────────────────────────────────────────
-// ✅ API LAYER
+// API LAYER
 // ─────────────────────────────────────────────────────────────
 const apiStack = new MedmeloApiStack(app, 'MedmeloApiStack', {
   env,
-  vpc: networkingStack.vpc,
-  lambdaSecurityGroup: networkingStack.lambdaSecurityGroup,
-  cognitoUserPoolId: authStack.userPoolId,
-  cognitoClientId: authStack.userPoolClientId,
+  vpc:                  networkingStack.vpc,
+  lambdaSecurityGroup:  networkingStack.lambdaSecurityGroup,
+  cognitoUserPoolId:    authStack.userPoolId,
+  cognitoClientId:      authStack.userPoolClientId,
+  redisEndpoint:        dataStack.redisEndpoint,
 });
 
 // ─────────────────────────────────────────────────────────────
-// ✅ CDN (CloudFront — MUST be us-east-1)
+// CDN (CloudFront — MUST be us-east-1)
 // ─────────────────────────────────────────────────────────────
 const cdnStack = new MedmeloCdnStack(app, 'MedmeloCdnStack', {
-  env: {
-    account: env.account,
-    region: 'us-east-1',
-  },
-
-  apiId: apiStack.apiId, // ✅ FIXED: dynamic API connection
+  env: { account: ctx.account, region: 'us-east-1' },
+  apiId: apiStack.apiId,
   crossRegionReferences: true,
 });
 
 // ─────────────────────────────────────────────────────────────
-// ✅ OBSERVABILITY
+// OBSERVABILITY
 // ─────────────────────────────────────────────────────────────
-const observabilityStack = new MedmeloObservabilityStack(
-  app,
-  'MedmeloObservabilityStack',
-  { 
-    env,
-    apiId: apiStack.apiId,
-  }
-);
+const observabilityStack = new MedmeloObservabilityStack(app, 'MedmeloObservabilityStack', {
+  env,
+  apiId:      apiStack.apiId,
+  alertEmail: ctx.alertEmail,
+});
 
 // ─────────────────────────────────────────────────────────────
-// ✅ DEPENDENCIES (VERY IMPORTANT)
+// DEPENDENCIES
 // ─────────────────────────────────────────────────────────────
-
-// API depends on core infra
 apiStack.addDependency(networkingStack);
 apiStack.addDependency(authStack);
 apiStack.addDependency(dataStack);
 apiStack.addDependency(storageStack);
 
-// CDN depends on API
 cdnStack.addDependency(apiStack);
 
-// Observability depends on API
 observabilityStack.addDependency(apiStack);

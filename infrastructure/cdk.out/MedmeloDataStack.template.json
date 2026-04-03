@@ -340,6 +340,17 @@
    "Value": {
     "Ref": "OneLinerProgressFCD4F05B"
    }
+  },
+  "ExportsOutputFnGetAttMedmeloRedisProdPrimaryEndPointAddress9059102E": {
+   "Value": {
+    "Fn::GetAtt": [
+     "MedmeloRedisProd",
+     "PrimaryEndPoint.Address"
+    ]
+   },
+   "Export": {
+    "Name": "MedmeloDataStack:ExportsOutputFnGetAttMedmeloRedisProdPrimaryEndPointAddress9059102E"
+   }
   }
  },
  "Parameters": {

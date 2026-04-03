@@ -1,3 +1,26 @@
 {
-  "app": "npx ts-node bin/app.ts"
+  "app": "npx ts-node bin/app.ts",
+  "context": {
+    "account": "101374115637",
+    "region": "ap-south-1",
+    "vpcName": "medmelo-vpc",
+    "lambdaSgId": "sg-093bbec0230c606db",
+    "cognitoUserPoolId": "ap-south-1_xo19c3jCI",
+    "cognitoUserPoolClientId": "3r1fht3ht9g1cdv3n0f7g8rc1r",
+    "auroraSubnetIds": [
+      "subnet-0fb0b53412e15a072",
+      "subnet-0bcfc328e35fb2cef",
+      "subnet-0be5207186b5c2d19",
+      "subnet-0b1e0be3d0fb6ffd6",
+      "subnet-067428b4a6cea98d9",
+      "subnet-059095141076e4b0f"
+    ],
+    "auroraSgId": "sg-0d42e13718f40d631",
+    "redisSubnetIds": [
+      "subnet-0bcfc328e35fb2cef",
+      "subnet-0be5207186b5c2d19"
+    ],
+    "redisSgId": "sg-09a387465a0b34e88",
+    "alertEmail": "medmelodev.app@gmail.com"
+  }
 }

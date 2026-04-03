@@ -76,16 +76,16 @@
         }
       }
     },
-    "58baef24d08d7d6c1f8ea0dc1a48ca3aab1be4b72c2079a628374066cb65c040": {
+    "c0beec9ed74dd0d2af210f5cfe4221e5a0e3b9068e7cc9aae4381e2d77b0de9b": {
       "displayName": "MedmeloApiStack Template",
       "source": {
         "path": "MedmeloApiStack.template.json",
         "packaging": "file"
       },
       "destinations": {
-        "101374115637-ap-south-1-6e2bc95c": {
+        "101374115637-ap-south-1-7068db1e": {
           "bucketName": "cdk-hnb659fds-assets-101374115637-ap-south-1",
-          "objectKey": "58baef24d08d7d6c1f8ea0dc1a48ca3aab1be4b72c2079a628374066cb65c040.json",
+          "objectKey": "c0beec9ed74dd0d2af210f5cfe4221e5a0e3b9068e7cc9aae4381e2d77b0de9b.json",
           "region": "ap-south-1",
           "assumeRoleArn": "arn:${AWS::Partition}:iam::101374115637:role/cdk-hnb659fds-file-publishing-role-101374115637-ap-south-1"
         }

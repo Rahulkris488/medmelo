@@ -6,8 +6,17 @@ import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
 import { Construct } from 'constructs';
 
+interface MedmeloDataStackProps extends cdk.StackProps {
+  auroraSubnetIds: string[];
+  auroraSgId: string;
+  redisSubnetIds: string[];
+  redisSgId: string;
+}
+
 export class MedmeloDataStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  public readonly redisEndpoint: string;
+
+  constructor(scope: Construct, id: string, props: MedmeloDataStackProps) {
     super(scope, id, props);
 
     const vpc = ec2.Vpc.fromLookup(this, "MedmeloVPC", {
@@ -25,16 +34,7 @@ export class MedmeloDataStack extends cdk.Stack {
       description: "Subnet group for Aurora Serverless v2",
       vpc,
       vpcSubnets: {
-        subnetFilters: [
-          ec2.SubnetFilter.byIds([
-            "subnet-0fb0b53412e15a072",
-            "subnet-0bcfc328e35fb2cef",
-            "subnet-0be5207186b5c2d19",
-            "subnet-0b1e0be3d0fb6ffd6",
-            "subnet-067428b4a6cea98d9",
-            "subnet-059095141076e4b0f",
-          ]),
-        ],
+        subnetFilters: [ec2.SubnetFilter.byIds(props.auroraSubnetIds)],
       },
       removalPolicy: cdk.RemovalPolicy.RETAIN,
     });
@@ -49,23 +49,10 @@ export class MedmeloDataStack extends cdk.Stack {
       writer: rds.ClusterInstance.serverlessV2("writer"),
       vpc,
       vpcSubnets: {
-        subnetFilters: [
-          ec2.SubnetFilter.byIds([
-            "subnet-0fb0b53412e15a072",
-            "subnet-0bcfc328e35fb2cef",
-            "subnet-0be5207186b5c2d19",
-            "subnet-0b1e0be3d0fb6ffd6",
-            "subnet-067428b4a6cea98d9",
-            "subnet-059095141076e4b0f",
-          ]),
-        ],
+        subnetFilters: [ec2.SubnetFilter.byIds(props.auroraSubnetIds)],
       },
       securityGroups: [
-        ec2.SecurityGroup.fromSecurityGroupId(
-          this,
-          "AuroraSG",
-          "sg-0d42e13718f40d631"
-        ),
+        ec2.SecurityGroup.fromSecurityGroupId(this, "AuroraSG", props.auroraSgId),
       ],
       subnetGroup: auroraSubnetGroup,
       credentials: rds.Credentials.fromSecret(auroraSecret),
@@ -79,11 +66,11 @@ export class MedmeloDataStack extends cdk.Stack {
 
     const redisSubnetGroup = new elasticache.CfnSubnetGroup(this, "RedisSubnetGroup", {
       description: "Subnets for medmelo Redis",
-      subnetIds: ["subnet-0bcfc328e35fb2cef", "subnet-0be5207186b5c2d19"],
+      subnetIds: props.redisSubnetIds,
       cacheSubnetGroupName: "medmelo-redis-subnet-group",
     });
 
-    new elasticache.CfnReplicationGroup(this, "MedmeloRedisProd", {
+    const redis = new elasticache.CfnReplicationGroup(this, "MedmeloRedisProd", {
       replicationGroupDescription: "Medmelo Redis prod",
       replicationGroupId: "medmelo-redis-prod",
       cacheNodeType: "cache.t4g.micro",
@@ -91,7 +78,7 @@ export class MedmeloDataStack extends cdk.Stack {
       engineVersion: "7.1",
       numCacheClusters: 1,
       cacheSubnetGroupName: redisSubnetGroup.ref,
-      securityGroupIds: ["sg-09a387465a0b34e88"],
+      securityGroupIds: [props.redisSgId],
       atRestEncryptionEnabled: true,
       transitEncryptionEnabled: true,
       transitEncryptionMode: "required",
@@ -99,6 +86,8 @@ export class MedmeloDataStack extends cdk.Stack {
       multiAzEnabled: false,
       automaticFailoverEnabled: false,
     });
+
+    this.redisEndpoint = redis.attrPrimaryEndPointAddress;
 
     const examSessions = new dynamodb.Table(this, "ExamSessions", {
       tableName: "ExamSessions",
