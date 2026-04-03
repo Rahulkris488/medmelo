@@ -1,1 +1,86 @@
-// gitkeep
+import { queryOne } from '../db/client';
+import { cacheGet, cacheSet } from '../db/redis';
+import { REDIS_KEYS, REDIS_TTL } from '../../shared/constants';
+import { Errors } from '../../shared/errors';
+import type { ApiEvent, AuthContext, User } from '../../shared/types';
+
+// ─────────────────────────────────────────────────────────────
+// EXTRACT RAW CLAIMS FROM JWT
+// API Gateway HTTP v2 JWT authorizer validates the token for us.
+// By the time Lambda runs, the token is already verified — we just read the claims.
+// ─────────────────────────────────────────────────────────────
+
+export const extractClaims = (event: ApiEvent): { userId: string; email: string } => {
+  const claims = event.requestContext?.authorizer?.jwt?.claims;
+
+  if (!claims?.sub || !claims?.email) {
+    throw Errors.forbidden('Missing or invalid token claims');
+  }
+
+  return {
+    userId: claims.sub,
+    email:  claims.email,
+  };
+};
+
+// ─────────────────────────────────────────────────────────────
+// FETCH FULL USER (cache → Aurora)
+// Needed by any handler that checks tier, isLegacy, profileCompleted etc.
+// ─────────────────────────────────────────────────────────────
+
+export const getAuthUser = async (userId: string): Promise<User> => {
+  // 1. Check Redis cache first
+  const cached = await cacheGet<User>(REDIS_KEYS.user(userId));
+  if (cached) return cached;
+
+  // 2. Fetch from Aurora
+  const user = await queryOne<User>(
+    `SELECT
+       user_id             AS "userId",
+       full_name           AS "fullName",
+       email,
+       phone,
+       college,
+       country_of_residence AS "countryOfResidence",
+       country_of_study     AS "countryOfStudy",
+       year_of_study        AS "yearOfStudy",
+       tier,
+       main_course          AS "mainCourse",
+       sub_course           AS "subCourse",
+       is_legacy            AS "isLegacy",
+       profile_completed    AS "profileCompleted",
+       created_at           AS "createdAt",
+       updated_at           AS "updatedAt"
+     FROM users
+     WHERE user_id = $1`,
+    [userId],
+  );
+
+  // 3. User exists in Cognito but not in Aurora yet — first login
+  if (!user) {
+    throw Errors.notFound('User');
+  }
+
+  // 4. Cache for next request
+  await cacheSet(REDIS_KEYS.user(userId), user, REDIS_TTL.USER);
+
+  return user;
+};
+
+// ─────────────────────────────────────────────────────────────
+// BUILD AUTH CONTEXT
+// Single call that does both — extract claims + fetch user.
+// Use this in handlers that need the full user (tier, profile, etc.)
+// ─────────────────────────────────────────────────────────────
+
+export const buildAuthContext = async (event: ApiEvent): Promise<AuthContext> => {
+  const { userId, email } = extractClaims(event);
+  const user = await getAuthUser(userId);
+
+  return {
+    userId,
+    email,
+    tier:     user.tier,
+    isLegacy: user.isLegacy,
+  };
+};
