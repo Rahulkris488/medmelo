@@ -86,10 +86,30 @@ export const dbDelete = async (
   await client.send(new DeleteCommand({ TableName: table, Key: key }));
 };
 
-// Query items by partition key (with optional sort key condition)
+// Query items by partition key — single page (use dbQueryAll for complete results)
 export const dbQuery = async <T>(
   input: QueryCommandInput,
 ): Promise<T[]> => {
   const result = await client.send(new QueryCommand(input));
   return (result.Items as T[]) ?? [];
+};
+
+// Query ALL items for a partition key — paginates automatically through LastEvaluatedKey.
+// Use this for deletions and exports where partial results are unacceptable.
+export const dbQueryAll = async <T>(
+  input: QueryCommandInput,
+): Promise<T[]> => {
+  const items: T[] = [];
+  let lastKey: Record<string, unknown> | undefined;
+
+  do {
+    const result = await client.send(new QueryCommand({
+      ...input,
+      ExclusiveStartKey: lastKey,
+    }));
+    if (result.Items) items.push(...(result.Items as T[]));
+    lastKey = result.LastEvaluatedKey as Record<string, unknown> | undefined;
+  } while (lastKey);
+
+  return items;
 };

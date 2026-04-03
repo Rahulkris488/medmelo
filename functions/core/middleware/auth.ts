@@ -19,25 +19,32 @@ export const extractClaims = (event: ApiEvent): { userId: string; email: string 
 
   return {
     userId: claims.sub,
-    email:  claims.email,
+    email:  claims.email.toLowerCase().trim(), // normalize email at entry point
   };
 };
 
 // ─────────────────────────────────────────────────────────────
 // FETCH FULL USER (cache → Aurora)
 // Needed by any handler that checks tier, isLegacy, profileCompleted etc.
+// Also enforces banned and deleted checks on every request.
 // ─────────────────────────────────────────────────────────────
 
 export const getAuthUser = async (userId: string): Promise<User> => {
   // 1. Check Redis cache first
   const cached = await cacheGet<User>(REDIS_KEYS.user(userId));
-  if (cached) return cached;
+  if (cached) {
+    // Re-check banned/deleted on cached user — cache is invalidated on ban/delete
+    // but double-check in case of race between ban and cache write
+    if ((cached as any).isBanned)  throw Errors.forbidden('Your account has been suspended');
+    if ((cached as any).deletedAt) throw Errors.forbidden('Account not found');
+    return cached;
+  }
 
   // 2. Fetch from Aurora
-  const user = await queryOne<User>(
+  const user = await queryOne<User & { isBanned: boolean; deletedAt: string | null }>(
     `SELECT
-       user_id             AS "userId",
-       full_name           AS "fullName",
+       user_id              AS "userId",
+       full_name            AS "fullName",
        email,
        phone,
        college,
@@ -49,6 +56,8 @@ export const getAuthUser = async (userId: string): Promise<User> => {
        sub_course           AS "subCourse",
        is_legacy            AS "isLegacy",
        profile_completed    AS "profileCompleted",
+       is_banned            AS "isBanned",
+       deleted_at           AS "deletedAt",
        created_at           AS "createdAt",
        updated_at           AS "updatedAt"
      FROM users
@@ -57,14 +66,21 @@ export const getAuthUser = async (userId: string): Promise<User> => {
   );
 
   // 3. User exists in Cognito but not in Aurora yet — first login
-  if (!user) {
-    throw Errors.notFound('User');
-  }
+  if (!user) throw Errors.notFound('User');
 
-  // 4. Cache for next request
-  await cacheSet(REDIS_KEYS.user(userId), user, REDIS_TTL.USER);
+  // 4. Banned — return 403, not 404 (don't leak existence)
+  if (user.isBanned) throw Errors.forbidden('Your account has been suspended');
 
-  return user;
+  // 5. Soft-deleted — treat as not found
+  if (user.deletedAt) throw Errors.notFound('User');
+
+  // 6. Strip internal fields before caching/returning
+  const { isBanned, deletedAt, ...safeUser } = user;
+
+  // 7. Cache clean user object
+  await cacheSet(REDIS_KEYS.user(userId), safeUser, REDIS_TTL.USER);
+
+  return safeUser;
 };
 
 // ─────────────────────────────────────────────────────────────
