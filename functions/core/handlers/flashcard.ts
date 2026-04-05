@@ -4,7 +4,7 @@ import { buildAuthContext } from '../middleware/auth';
 import { dbPut, dbDelete, dbQueryAll, TABLES } from '../db/dynamo';
 import { REDIS_TTL } from '../../shared/constants';
 import { sanitizeStr, parseBody } from '../../shared/sanitize';
-import { ok, created } from '../../shared/response';
+import { ok, created, internalError } from '../../shared/response';
 import { Errors } from '../../shared/errors';
 import { createLogger, toResponse } from '../../shared/logger';
 import type {
@@ -126,7 +126,7 @@ export const createDeck = async (event: ApiEvent): Promise<ApiResponse> => {
       [auth.userId, name, topic],
     );
 
-    if (!deck) throw Errors.internal('Failed to create deck');
+    if (!deck) throw Errors.internal();
 
     log.info('deck created', { userId: auth.userId, deckId: deck.deckId });
     return created(deck);
